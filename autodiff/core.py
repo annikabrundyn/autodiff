@@ -1,7 +1,11 @@
 import numpy as np
 
 
-class Tensor():
+class Tensor:
+    def __init__(self, value, name=None):
+        self.value = value
+        self.name = name
 
-class Node():
+
+class Node:
     def __init__(self):
