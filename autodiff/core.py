@@ -44,4 +44,3 @@ class Add(Node):
         return grad
 
 
-print("hey")
