@@ -29,8 +29,6 @@ class RootGate(object):
     def __truediv__(self, other):
         return DivideGate(self, other)
 
-
-
 class tensor(RootGate):
     def __init__(self, dtype, name=None):
         self.name = dtype if name is None else name
@@ -228,9 +226,5 @@ class SubtractGate(RootGate):
         dx = 1
         return dz * dx
 
-
 def is_valid_node(a):
     return type(a) != int and type(a) != float
-
-
-print("hey")
