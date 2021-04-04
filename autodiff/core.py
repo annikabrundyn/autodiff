@@ -1,7 +1,7 @@
 import numpy as np
 
 
-class Node:
+class Node(object):
     def __init__(self, children, name="Node"):
         self.children = [child if isinstance(child, Node) else Variable(child) for child in children]
         self.name = name
