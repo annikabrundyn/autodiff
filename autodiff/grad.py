@@ -1,4 +1,9 @@
-def gradients(fn, vars):
+'''
+right now this is just implementing forward mode automatic differentiation
+need to replace with reverse model AD
+'''
+
+def grad(fn, vars):
 
     def compute(**kwargs):
         head = fn
@@ -24,8 +29,6 @@ def gradients(fn, vars):
         return grads
 
     return compute
-
-
 
 
 def compile(output):
