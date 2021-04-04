@@ -1,40 +1,4 @@
-import numpy as np
-
-
-class Node(object):
-
-    def __add__(self, other):
-        return Add(self, other)
-
-    def __sub__(self, other):
-        return Subtract(self, other)
-
-    def __mul__(self, other):
-        return Multiply(self, other)
-
-    def __pow__(self, power, modulo=None):
-        return Power(self, power)
-
-    def __floordiv__(self, other):
-        return Divide(self, other)
-
-    def __truediv__(self, other):
-        return Divide(self, other)
-
-
-class Variable(Node):
-    def __init__(self, dtype, name=None):
-        self.name = dtype if name is None else name
-        self.dtype = dtype
-        self.value = None
-        self.a = None
-        self.b = None
-
-    def __str__(self):
-        return 'Variable(name:{}, dtype: {})'.format(self.name, self.dtype)
-
-    def forward_pass(self):
-        return self.value
+from .nodes import Node
 
 
 def is_valid_node(a):
@@ -57,7 +21,6 @@ class Add(Node):
         return Add(self, other)
 
     def forward_pass(self):
-
         forward_a = self.a.forward_pass() if is_valid_node(self.a) else self.a
         forward_b = self.b.forward_pass() if is_valid_node(self.b) else self.b
         ans = forward_a + forward_b
@@ -65,14 +28,9 @@ class Add(Node):
         return ans
 
     def backward_pass(self, dz, wrt):
-        """
-        f(x) = a + x
-        df/dx = 1
-        :param dz:
-        :return:
-        """
         dx = 1
         return dz * dx
+
 
 class Multiply(Node):
 
@@ -97,12 +55,6 @@ class Multiply(Node):
         return ans
 
     def backward_pass(self, dz, wrt):
-        """
-        f(x) = ax
-        df/dx = a
-        :param dz:
-        :return:
-        """
         # df/dx = ax = a
 
         # backward_a = self.a.backward_pass(dz, wrt) if is_valid_node(self.a) else self.a
@@ -119,6 +71,7 @@ class Multiply(Node):
             dx = dx.value
 
         return dz * dx
+
 
 class Power(Node):
 
@@ -143,14 +96,9 @@ class Power(Node):
         return ans
 
     def backward_pass(self, dz):
-        """
-        f(x) = a + x
-        df/dx = 1
-        :param dz:
-        :return:
-        """
         dx = 1
         return dz * dx
+
 
 class Divide(Node):
 
@@ -178,14 +126,9 @@ class Divide(Node):
         return ans
 
     def backward_pass(self, dz):
-        """
-        f(x) = a + x
-        df/dx = 1
-        :param dz:
-        :return:
-        """
         dx = 1
         return dz * dx
+
 
 class Subtract(Node):
 
@@ -210,12 +153,6 @@ class Subtract(Node):
         return ans
 
     def backward_pass(self, dz):
-        """
-        f(x) = a + x
-        df/dx = 1
-        :param dz:
-        :return:
-        """
         dx = 1
         return dz * dx
 
