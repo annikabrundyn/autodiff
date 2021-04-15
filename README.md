@@ -11,3 +11,8 @@ TODOS:
 - [ ] extend to tensors not just scalars - requires jacobian vector product
 - [ ] caching/memoization
 - [ ] parallelization?
+
+
+
+cupy for extending to gpus:
+https://cupy.dev/#features
