@@ -22,6 +22,7 @@ def grad(fn, vars):
 
         z = head.forward_pass()
         grads = []
+
         for var in vars:
             grad = head.backward_pass(1.0, var)
             grads.append(grad)

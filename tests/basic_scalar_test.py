@@ -1,13 +1,17 @@
 import autodiff as ad
 
-x = ad.Variable('int32', name='x')
-y = ad.Variable('int32', name='y')
+# first define our variables symbolically
+x1 = ad.Variable(name='x1')
+x2 = ad.Variable(name='x2')
 
-z = (x*x) + y
+# then define symbolic expression for y
+y = x1 * x2 + x1
 
-grad_x = ad.grad(z, [x])
+grad_x = ad.grad(y, [x1])
 print('dz/dx:', grad_x(x=2.0, y=3.0))
 
 # calculate forward only
 f_z = ad.compile(z)
 print(f_z(x=2.0, y=3.0))
+
+

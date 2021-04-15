@@ -28,8 +28,8 @@ class Node(object):
 
 
 class Variable(Node):
-    def __init__(self, dtype, name=None):
-        self.name = dtype if name is None else name
+    def __init__(self, name):
+        self.name = name
         self.value = None
         self.a = None
         self.b = None
