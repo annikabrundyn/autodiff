@@ -1,4 +1,4 @@
-from .nodes import Node
+from .node import Node
 
 
 def is_valid_node(a):

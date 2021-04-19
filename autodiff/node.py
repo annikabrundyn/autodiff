@@ -2,6 +2,20 @@
 
 class Node(object):
 
+    def __init__(self, children, name="Node"):
+        self.children = children
+        self.name = name
+
+        self.id = Node.id
+        Node.id += 1
+
+    def forward(self):
+        pass
+
+    def backward(self):
+        pass
+
+
     def __add__(self, other):
         from .operations import Add
         return Add(self, other)
