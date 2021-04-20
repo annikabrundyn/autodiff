@@ -5,12 +5,6 @@ from node import Node, Variable
 from functools import reduce
 
 
-def shape_from_elems(*elems):
-    if len(elems) == 0:
-        return 1,
-    return np.broadcast(*[np.ones(elem.shape) for elem in elems]).shape
-
-
 class Add(Node):
     def __init__(self, *elems, name="Add"):
         if not elems:
