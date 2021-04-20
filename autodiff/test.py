@@ -5,7 +5,7 @@ from grad import grad
 x = Variable(3, name="x")
 y = Variable(4, name="y")
 
-z = x * y
+z = x * 2
 
 x_grad = grad(z, [x])
 

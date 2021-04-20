@@ -1,8 +1,7 @@
-import re
 import numpy as np
 import numbers
-from node import Node, Variable
 
+from node import Node, Variable
 from functools import reduce
 
 
@@ -44,8 +43,6 @@ class Mul(Node):
         return reduce(Mul.fn, [child() for child in self.children], 1)
 
     def _partial_derivative(self, wrt, previous_grad):
-        # previous_grad will always be of shape of the shape of the "largest" variable ?
-        # we need to sum across those other axes ?
         add_list = []
         for loc, child in enumerate(self.children):
             if child == wrt:
