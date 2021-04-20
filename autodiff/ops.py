@@ -17,7 +17,6 @@ class Add(Node):
         if not elems:
             name = "0-" + name
         super().__init__(list(elems), name)
-        #self.shape = shape_from_elems(*self.children)
 
     def _eval(self):
         # Using python sum instead of np.sum because python converts types correctly
@@ -39,7 +38,6 @@ class Mul(Node):
         if not elems:
             name = "1-" + name
         super().__init__(list(elems), name)
-        #self.shape = shape_from_elems(*self.children)
 
     def _eval(self):
         # Mul broadcasts
@@ -61,7 +59,6 @@ class Negate(Node):
     def __init__(self, node, name="Negate"):
         super().__init__([node], name)
         self.node = self.children[0]
-        self.shape = self.node.shape
 
     def _eval(self):
         return -self.node()
@@ -77,7 +74,6 @@ class Exp(Node):
     def __init__(self, node, name="Exp"):
         super().__init__([node], name)
         self.node = self.children[0]
-        self.shape = self.node.shape
 
     def _eval(self):
         return np.exp(self.node())
