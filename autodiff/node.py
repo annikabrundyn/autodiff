@@ -1,11 +1,9 @@
 import time
 import numbers
 import numpy as np
-from contextlib import contextmanager
 
 
 class Node:
-    epsilon = 1e-12
     id = 0
     context_list = []
 
@@ -46,12 +44,7 @@ class Node:
         return self.cached
 
     def partial_derivative(self, wrt, previous_grad):
-        with add_context(self.name + " PD" + " wrt " + str(wrt)):
-            return self._partial_derivative(wrt, previous_grad)
-
-    def plot_comp_graph(self, view=True, name="comp_graph"):
-        from ..visualization import graph_visualization
-        graph_visualization.plot_comp_graph(self, view=view, name=name)
+        return self._partial_derivative(wrt, previous_grad)
 
     def __call__(self, *args, **kwargs):
         return self.eval()
@@ -60,11 +53,11 @@ class Node:
         return self.name  # + " " + str(self.id)
 
     def __add__(self, other):
-        from .ops import Add
+        from ops import Add
         return Add(self, other)
 
     def __neg__(self):
-        from .ops import Negate
+        from ops import Negate
         return Negate(self)
 
     def __sub__(self, other):
@@ -74,39 +67,24 @@ class Node:
         return self.__neg__().__add__(other)
 
     def __mul__(self, other):
-        from .ops import Mul
+        from ops import Mul
         return Mul(self, other)
 
-    def __matmul__(self, other):
-        from .high_level_ops import MatMul
-        return MatMul(self, other)
-
-    def __rmatmul__(self, other):
-        from .high_level_ops import MatMul
-        return MatMul(other, self)
-
-    def __imatmul__(self, other):
-        return self.__matmul__(other)
-
     def __truediv__(self, other):
-        from .ops import Recipr
+        from ops import Recipr
         return self.__mul__(Recipr(other))
 
     def __rtruediv__(self, other):
-        from .ops import Recipr
+        from ops import Recipr
         return Recipr(self).__mul__(other)
 
     def __pow__(self, power, modulo=None):
-        from .ops import Pow
+        from ops import Pow
         return Pow(self, power)
 
     __rmul__ = __mul__
     __radd__ = __add__
-
-    def __getitem__(self, item):
-        from .reshape import Slice
-        return Slice(self, item)
-
+    
 
 class Variable(Node):
     def __init__(self, value, name=None):

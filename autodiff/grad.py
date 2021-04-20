@@ -1,9 +1,9 @@
 import functools
 import numpy as np
 import collections
-from .utils import reverse_topo_sort
-from .ops import Add
-from .node import Variable
+from utils import reverse_topo_sort
+from ops import Add
+from node import Variable
 
 
 def grad(top_node, wrt_list, previous_grad=None):
@@ -37,8 +37,6 @@ def grad(top_node, wrt_list, previous_grad=None):
     rev_graph = reverse_topo_sort(top_node)
     for node in rev_graph:
         add_partials(dct, node)
-
-    #dct = functools.reduce(add_partials, reverse_topo_sort(top_node), dct)  # basically a foldl
 
     return [dct[wrt] for wrt in wrt_list]
 
