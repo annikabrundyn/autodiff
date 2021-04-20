@@ -4,40 +4,12 @@ import numbers
 from node import Node, Variable
 
 from functools import reduce
-from string import ascii_lowercase
-
-
-# def module_wrapper(fn):
-#     def wrap_in_context(*args, **kwargs):
-#         with add_context(fn.__name__):
-#             return fn(*args, **kwargs)
-# 
-#     return wrap_in_context
-# 
-# 
-def letters_from_tuple(tpl):
-    return ascii_lowercase[:len(tpl)]
 
 
 def shape_from_elems(*elems):
     if len(elems) == 0:
         return 1,
     return np.broadcast(*[np.ones(elem.shape) for elem in elems]).shape
-
-
-# @module_wrapper
-# def ReduceSumToShape(tensor, to_shape):
-#     if tensor.shape == to_shape:
-#         return tensor
-#     previous_grad_letters = letters_from_tuple(tensor.shape)
-#     if len(to_shape) == 0:
-#         wrt_letters = ""
-#     else:
-#         wrt_letters = previous_grad_letters[-len(to_shape):]  # take last letters of previous_grad_letters
-# 
-#     new_curr_grad = Einsum(str(previous_grad_letters) + "->" + str(wrt_letters), tensor)
-#     reduced_sum_grad = ReduceSumKeepDims(new_curr_grad, axes=[i for i, val in enumerate(to_shape) if val == 1])
-#     return reduced_sum_grad
 
 
 class Add(Node):
