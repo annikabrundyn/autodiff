@@ -1,58 +1,47 @@
-'''
-right now this is just implementing forward mode automatic differentiation
-need to replace with reverse model AD
-'''
-
-def grad(fn, vars):
-
-    def compute(**kwargs):
-        head = fn
-        stack = [head]
-        while len(stack) > 0:
-            top = stack.pop()
-            if top.a and is_valid_node(top.a):
-                stack.append(top.a)
-                if top.a.name in kwargs:
-                    top.a.value = kwargs[top.a.name]
-
-            if top.b and is_valid_node(top.b):
-                stack.append(top.b)
-                if top.b.name in kwargs:
-                    top.b.value = kwargs[top.b.name]
-
-        z = head.forward_pass()
-        grads = []
-
-        for var in vars:
-            grad = head.backward_pass(1.0, var)
-            grads.append(grad)
-
-        return grads
-
-    return compute
+import functools
+import numpy as np
+import collections
+from .utils import reverse_topo_sort
+from .ops import Add
+from .node import Variable
 
 
-def compile(output):
+def grad(top_node, wrt_list, previous_grad=None):
+    """
+    Transforms the computational graph of top_node into a list of computational graphs corresponoding to
+    partial derivatives of top_node with respect to all variables in wrt_list.
 
-    def compute(**kwargs):
-        head = output
-        stack = [head]
-        while len(stack) > 0:
-            top = stack.pop()
-            if top.a and is_valid_node(top.a):
-                stack.append(top.a)
-                if top.a.name in kwargs:
-                    top.a.value = kwargs[top.a.name]
+    It delegates the actual implementation of partial derivatives to nodes in the computational graph and doesn't care
+    how they're implemented.
+    It can be elegantly implemented using foldl.
+    Essentially, grad is structural transformation that is a function *only* of the topology of the computational graph.
 
-            if top.b and is_valid_node(top.b):
-                stack.append(top.b)
-                if top.b.name in kwargs:
-                    top.b.value = kwargs[top.b.name]
+    :param top_node: node in the graph whose gradient will be taken with respect to all variables in wrt_list
+    :param wrt_list: list of objects, instances of Node, whose gradient we're looking for
+    :param previous_grad: incoming gradient to top node, by default np.ones(top_node.shape)
+    :return: returns a list of gradients corresponding to variables in wrt_list
+    """
+    assert isinstance(wrt_list, list) or isinstance(wrt_list, tuple)
+    if previous_grad is None:
+        previous_grad = Variable(np.ones(top_node.shape), name=add_sum_name(top_node))
 
-        answer = head.forward_pass()
-        return answer
-    return compute
+    # if call dct with nonexistent key, the key value pair (key, Variable(0)) will be added
+    dct = collections.defaultdict(lambda: Variable(0))
+    dct[top_node] += previous_grad  # add the incoming gradient for the top node
+
+    def add_partials(dct, node):
+        for child in set(node.children):  # calc. all partial derivs w.r.t. each child and add them to child's grads
+            dct[child] += node.partial_derivative(wrt=child, previous_grad=dct[node])
+        return dct
+
+    rev_graph = reverse_topo_sort(top_node)
+    for node in rev_graph:
+        add_partials(dct, node)
+
+    #dct = functools.reduce(add_partials, reverse_topo_sort(top_node), dct)  # basically a foldl
+
+    return [dct[wrt] for wrt in wrt_list]
 
 
-def is_valid_node(a):
-    return type(a) != int and type(a) != float
+def add_sum_name(node):
+    return "'" + node.name + "' grad_sum"
