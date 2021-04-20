@@ -28,7 +28,7 @@ class Node:
         return self.eval()
 
     def __str__(self):
-        return self.name  # + " " + str(self.id)
+        return self.name
 
     def __add__(self, other):
         from ops import Add
