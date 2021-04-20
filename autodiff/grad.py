@@ -7,20 +7,7 @@ from node import Variable
 
 
 def grad(top_node, wrt_list, previous_grad=None):
-    """
-    Transforms the computational graph of top_node into a list of computational graphs corresponoding to
-    partial derivatives of top_node with respect to all variables in wrt_list.
-
-    It delegates the actual implementation of partial derivatives to nodes in the computational graph and doesn't care
-    how they're implemented.
-    It can be elegantly implemented using foldl.
-    Essentially, grad is structural transformation that is a function *only* of the topology of the computational graph.
-
-    :param top_node: node in the graph whose gradient will be taken with respect to all variables in wrt_list
-    :param wrt_list: list of objects, instances of Node, whose gradient we're looking for
-    :param previous_grad: incoming gradient to top node, by default np.ones(top_node.shape)
-    :return: returns a list of gradients corresponding to variables in wrt_list
-    """
+    
     assert isinstance(wrt_list, list) or isinstance(wrt_list, tuple)
     if previous_grad is None:
         previous_grad = Variable(np.ones(top_node.shape), name=add_sum_name(top_node))
