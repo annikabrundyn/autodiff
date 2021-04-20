@@ -17,7 +17,7 @@ class Add(Node):
         if not elems:
             name = "0-" + name
         super().__init__(list(elems), name)
-        self.shape = shape_from_elems(*self.children)
+        #self.shape = shape_from_elems(*self.children)
 
     def _eval(self):
         # Using python sum instead of np.sum because python converts types correctly
@@ -39,7 +39,7 @@ class Mul(Node):
         if not elems:
             name = "1-" + name
         super().__init__(list(elems), name)
-        self.shape = shape_from_elems(*self.children)
+        #self.shape = shape_from_elems(*self.children)
 
     def _eval(self):
         # Mul broadcasts

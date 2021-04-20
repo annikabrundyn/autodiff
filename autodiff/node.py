@@ -3,19 +3,12 @@ import numpy as np
 
 
 class Node:
-    id = 0
-    context_list = []
 
     def __init__(self, children, name="Node"):
         # wraps normal numbers into Variables
         self.children = [child if isinstance(child, Node) else Variable(child) for child in children]
         self.name = name
         self.cached = None
-        self.shape = None
-
-        self.context_list = Node.context_list.copy()
-        self.id = Node.id
-        Node.id += 1
 
     def _eval(self):
         raise NotImplementedError()
@@ -26,7 +19,6 @@ class Node:
     def eval(self):
         if self.cached is None:
             self.cached = self._eval()
-
         return self.cached
 
     def partial_derivative(self, wrt, previous_grad):

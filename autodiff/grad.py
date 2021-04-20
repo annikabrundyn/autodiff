@@ -10,7 +10,8 @@ def grad(top_node, wrt_list, previous_grad=None):
     
     assert isinstance(wrt_list, list) or isinstance(wrt_list, tuple)
     if previous_grad is None:
-        previous_grad = Variable(np.ones(top_node.shape), name=add_sum_name(top_node))
+        previous_grad = Variable(1, name=add_sum_name(top_node))
+        #previous_grad = Variable(np.ones(top_node.shape), name=add_sum_name(top_node))
 
     # if call dct with nonexistent key, the key value pair (key, Variable(0)) will be added
     dct = collections.defaultdict(lambda: Variable(0))
