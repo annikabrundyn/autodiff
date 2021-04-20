@@ -85,6 +85,22 @@ class Mul(Node):
         return grad
 
 
+class Negate(Node):
+    def __init__(self, node, name="Negate"):
+        super().__init__([node], name)
+        self.node = self.children[0]
+        self.shape = self.node.shape
+
+    def _eval(self):
+        return -self.node()
+
+    def _partial_derivative(self, wrt, previous_grad):
+        if self.node == wrt:
+            return -previous_grad
+        else:
+            return 0
+
+
 class Exp(Node):
     def __init__(self, node, name="Exp"):
         super().__init__([node], name)

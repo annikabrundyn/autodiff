@@ -1,4 +1,3 @@
-import time
 import numbers
 import numpy as np
 
@@ -19,22 +18,9 @@ class Node:
         Node.id += 1
 
     def _eval(self):
-        """
-
-        :return: returns the value of the evaluated Node
-        """
         raise NotImplementedError()
 
     def _partial_derivative(self, wrt, previous_grad):
-        """
-        Method which calculates the partial derivative of self with respect to the wrt Node.
-        By defining this method without evaluation of any nodes, higher-order gradients
-        are available for free.
-
-        :param wrt: instance of Node, partial derivativative with respect to it
-        :param previous_grad: gradient with respect to self
-        :return: an instance of Node whose evaluation yields the partial derivative
-        """
         raise NotImplementedError()
 
     def eval(self):
@@ -63,27 +49,9 @@ class Node:
     def __sub__(self, other):
         return self.__add__(other.__neg__())
 
-    def __rsub__(self, other):
-        return self.__neg__().__add__(other)
-
     def __mul__(self, other):
         from ops import Mul
         return Mul(self, other)
-
-    def __truediv__(self, other):
-        from ops import Recipr
-        return self.__mul__(Recipr(other))
-
-    def __rtruediv__(self, other):
-        from ops import Recipr
-        return Recipr(self).__mul__(other)
-
-    def __pow__(self, power, modulo=None):
-        from ops import Pow
-        return Pow(self, power)
-
-    __rmul__ = __mul__
-    __radd__ = __add__
     
 
 class Variable(Node):
@@ -113,12 +81,3 @@ class Variable(Node):
         if self == wrt:
             return previous_grad
         return 0
-
-# 
-# @contextmanager
-# def add_context(ctx):
-#     Node.context_list.append(ctx + "_" + str(time.time()))
-#     try:
-#         yield
-#     finally:
-#         del Node.context_list[-1]
