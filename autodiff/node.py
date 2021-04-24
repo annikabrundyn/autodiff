@@ -17,6 +17,7 @@ class Node:
         raise NotImplementedError()
 
     def eval(self):
+        # evaluate/calculate expression if not cached
         if self.cached is None:
             self.cached = self._eval()
         return self.cached

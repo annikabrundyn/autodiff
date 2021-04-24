@@ -2,11 +2,12 @@ from node import Node, Variable
 from ops import *
 from grad import grad
 
-x = Variable(3, name="x")
-y = Variable(4, name="y")
+a = Variable(3, name="a")
+b = Variable(4, name="b")
+c = Variable(5, name="c")
 
-z = x * 2
+z = (a*b*c)
 
-x_grad = grad(z, [x])
+a_grad = grad(z, [a])
 
 print('hey')
