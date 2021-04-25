@@ -1,3 +1,4 @@
+import numpy as np
 
 def evaluate_dag(sorted_nodes):
   for node in sorted_nodes:
