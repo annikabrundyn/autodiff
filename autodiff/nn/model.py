@@ -12,7 +12,10 @@ class Model:
         for i, _ in enumerate(self.layers):
             forward = self.layers[i].forward(X)
             X = forward
-
         return forward
+
+    def __call__(self, X):
+        return self.predict(X)
+
 
 
