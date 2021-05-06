@@ -87,16 +87,6 @@ class Linear(Layer):
             Weights gradient of this layer.
         dB : numpy.Array
             Biases gradient of this layer.
-        References
-        ----------
-        [1] Justin Johnson - Backpropagation for a Linear Layer:
-        http://cs231n.stanford.edu/handouts/linear-backprop.pdf
-        [2] Pedro Almagro Blanco - Algoritmo de Retropropagación:
-        http://www.cs.us.es/~fsancho/ficheros/IAML/2016/Sesion04/
-        capitulo_BP.pdf
-        [3] Raúl Rojas - Neural Networks: A Systematic Introduction:
-        https://page.mi.fu-berlin.de/rojas/neural/chapter/K7.pdf
-
         """
         dW = np.dot(dA, self._prev_acti.T)
         dB = dA.mean(axis=1, keepdims=True)
@@ -226,13 +216,6 @@ class Tanh(Layer):
     ----------
     output_dim : int
         Number of neurons in this layers.
-    References
-    ----------
-    [1] Wolfram Alpha - Hyperbolic tangent:
-    http://mathworld.wolfram.com/HyperbolicTangent.html
-    [2] Brendan O'Connor - tanh is a rescaled logistic sigmoid function:
-    https://brenocon.com/blog/2013/10/tanh-is-a-rescaled-logistic-sigmoid-
-    function/
     """
 
     def __init__(self, output_dim):
