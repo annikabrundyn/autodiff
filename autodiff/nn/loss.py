@@ -8,19 +8,19 @@ class MSE(Layer):
     error of the following layer.
     """
 
-    def __init__(self):
+    def __init__(self, pred, target):
+        self.pred = pred
+        self.target = target
         self.type = 'MSE'
 
     def forward(self, pred, target):
-        self.pred = pred
-        self.target = target
         return np.power(self.pred - self.target, 2).mean()
 
     def backward(self):
         return 2 * (self.pred - self.target).mean()
 
-    def __call__(self, pred, target):
-        return self.forward(pred, target)
+    def __call__(self):
+        return self.forward(self.pred, self.target)
 
 
 

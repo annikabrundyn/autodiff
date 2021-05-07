@@ -39,8 +39,11 @@ class Linear(Layer):
     """
 
     def __init__(self, input_dim, output_dim):
-        self.weights = np.random.rand(output_dim, input_dim)
-        self.biases = np.random.rand(output_dim, 1)
+
+        self.weights = np.random.uniform(low=-0.05, high=0.05, size=(output_dim, input_dim))
+        self.biases = np.random.uniform(low=-0.05, high=0.05, size=(output_dim, 1))
+        #self.weights = np.random.rand(output_dim, input_dim)
+        #self.biases = np.random.rand(output_dim, 1)
         self.units = output_dim
         self.type = 'Linear'
 

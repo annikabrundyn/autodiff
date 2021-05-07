@@ -9,6 +9,7 @@ TODOS:
 
 - [ ] add Cross Entropy loss
 - [ ] parallelization / gpus
+- [ ] figure out why doesnt work for regression - have to have sigmoid at end/doesnt work with linear
 
 
 
