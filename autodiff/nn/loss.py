@@ -48,3 +48,5 @@ class BCE(Layer):
 
     def __call__(self, pred, target):
         return self.forward(pred, target)
+
+
