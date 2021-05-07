@@ -30,13 +30,12 @@ class BCE(Layer):
     error of the following layer.
     """
 
-    def __init__(self):
-        self.type = 'BCE'
-
-    def forward(self, pred, target):
+    def __init__(self, pred, target):
         self.pred = pred
         self.target = target
+        self.type = 'BCE'
 
+    def forward(self):
         n = len(self.target)
         loss = np.nansum(-self.target * np.log(self.pred) - (1 - self.target) * np.log(1 - self.pred)) / n
 
@@ -46,7 +45,7 @@ class BCE(Layer):
         n = len(self.target)
         return (-(self.target / self.pred) + ((1 - self.target) / (1 - self.pred))) / n
 
-    def __call__(self, pred, target):
-        return self.forward(pred, target)
+    def __call__(self):
+        return self.forward()
 
 

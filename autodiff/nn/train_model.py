@@ -1,24 +1,45 @@
 from model import Model
 from layer import *
 from loss import BCE, MSE
+from data import generate_data
 from sklearn.datasets import load_iris, load_boston, load_breast_cancer
+from sklearn.datasets import make_classification
+from sklearn import preprocessing
+from sklearn.model_selection import train_test_split
 
 import numpy as np
 
-X, Y = load_breast_cancer(return_X_y=True)
+
+# X, y = make_classification(n_samples=100, n_features=2, n_informative=2, n_redundant=0, random_state=42)
+# X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=42)
+#
+# scaler = preprocessing.MinMaxScaler().fit(X_train)
+# X_train = scaler.transform(X_train)
+# X_test = scaler.transform(X_test)
+
+
+data = generate_data(samples=10000, shape_type='circles', noise=0.04)
+X = data[['x', 'y']].values
+Y = data['label'].T.values
+
+#X, Y = load_breast_cancer(return_X_y=True)
 
 # our model takes in the shape (feats, samples)
-X = X.T
-Y = np.reshape(Y, (1, len(Y)))
+#X = X.T
+#Y = np.reshape(Y, (1, len(Y)))
+
+
 # define the data - two features, single sample
 #X = np.random.rand(2, 1000)
 #Y = np.random.rand(1000)
+
+
 
 losses = []
 
 # define the model
 model = Model()
-model.add(Linear(30, 5))
+model.add(Linear(2, 5))
 model.add(ReLU(5))
 model.add(Linear(5, 2))
 model.add(ReLU(2))
@@ -26,12 +47,12 @@ model.add(Linear(2, 1))
 model.add(Sigmoid(1))
 
 
-for epoch in range(100000):
+for epoch in range(10000):
 
     # forward
-    pred = model(X)
+    pred = model(X.T)
 
-    loss_f = MSE(pred, Y)
+    loss_f = BCE(pred, Y)
 
     error = loss_f()
     losses.append(error)
@@ -46,10 +67,10 @@ for epoch in range(100000):
             gradient, dW, dB = model.layers[i].backward(gradient)
             #self.weights = self.weights - rate * dW
             #self.biases = self.biases - rate * dB
-            model.layers[i].optimize(dW, dB, 0.01)
+            model.layers[i].optimize(dW, dB, 0.05)
 
-    print(error)
+    if epoch % 100:
+        print("current loss: ", error)
 
-preds = model(X)
 
-print("hi")
+#print("hi")
