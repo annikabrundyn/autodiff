@@ -10,17 +10,18 @@ from sklearn.model_selection import train_test_split
 import numpy as np
 
 
-# X, y = make_classification(n_samples=100, n_features=2, n_informative=2, n_redundant=0, random_state=42)
-# X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=42)
-#
-# scaler = preprocessing.MinMaxScaler().fit(X_train)
-# X_train = scaler.transform(X_train)
-# X_test = scaler.transform(X_test)
+X, y = make_classification(n_samples=10000, n_features=2, n_informative=2, n_redundant=0, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=42)
 
+scaler = preprocessing.MinMaxScaler().fit(X_train)
+X = scaler.transform(X_train)
+X_test = scaler.transform(X_test)
 
-data = generate_data(samples=10000, shape_type='circles', noise=0.04)
-X = data[['x', 'y']].values
-Y = data['label'].T.values
+Y = y_train
+
+#data = generate_data(samples=10000, shape_type='circles', noise=0.04)
+#X = data[['x', 'y']].values
+#Y = data['label'].T.values
 
 #X, Y = load_breast_cancer(return_X_y=True)
 
