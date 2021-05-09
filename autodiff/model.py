@@ -1,5 +1,5 @@
 import numpy as np
-from autodiff.nn.layer import Layer
+from layer import Layer
 
 
 class Model:

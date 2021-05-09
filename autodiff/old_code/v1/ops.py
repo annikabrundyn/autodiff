@@ -1,6 +1,6 @@
 import numpy as np
 
-from v1.node import Node, Variable
+from old_code.v1.node import Node, Variable
 from functools import reduce
 
 

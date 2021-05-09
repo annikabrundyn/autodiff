@@ -1,9 +1,7 @@
-from model import Model
-from layer import *
-from loss import BCE, MSE
-from sklearn.datasets import make_classification, load_iris, load_boston, load_breast_cancer
-from sklearn import preprocessing
-from sklearn.model_selection import train_test_split
+import autodiff as ad
+#from layer import *
+#from loss import BCE
+from sklearn.datasets import make_classification
 from sklearn.metrics import accuracy_score
 
 
@@ -19,16 +17,16 @@ X, Y = make_classification(n_samples=10000, n_features=3, n_informative=2, n_red
 
 
 ### Define the model
-model = Model()
-model.add(Linear(3, 10))
-model.add(ReLU(10))
-model.add(Linear(10, 5))
-model.add(ReLU(5))
-model.add(Linear(5, 1))
-model.add(Sigmoid(1))
+model = ad.Model()
+model.add(ad.Linear(3, 10))
+model.add(ad.ReLU(10))
+model.add(ad.Linear(10, 5))
+model.add(ad.ReLU(5))
+model.add(ad.Linear(5, 1))
+model.add(ad.Sigmoid(1))
 
 
-
+### Train the model
 losses = []
 
 for epoch in range(1000000):
@@ -37,7 +35,7 @@ for epoch in range(1000000):
     # our model takes in the shape (feats, samples)
     pred = model(X.T)
 
-    loss_f = BCE(pred, Y)
+    loss_f = ad.BCE(pred, Y)
 
     error = loss_f()
     losses.append(error)

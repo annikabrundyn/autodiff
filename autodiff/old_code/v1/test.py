@@ -1,5 +1,5 @@
-from v1.ops import *
-from v1.grad import grad
+from old_code.v1.ops import *
+from old_code.v1.grad import grad
 
 a = Variable(3, name="a")
 b = Variable(4, name="b")
