@@ -1,33 +1,35 @@
 import numpy as np
+from abc import ABC, abstractmethod
 
 
-class Layer:
-    """Layer abstract class"""
+class Layer(ABC):
+    """abstract class of Layer"""
 
+    @abstractmethod
     def __init__(self):
         pass
 
+    @abstractmethod
     def __len__(self):
         pass
 
+    @abstractmethod
     def __str__(self):
         pass
 
-    def forward(self):
+    @abstractmethod
+    def forward(self, input_val: np.ndarray):
         pass
 
-    def backward(self):
-        pass
-
-    def optimize(self):
+    @abstractmethod
+    def backward(self, dA: np.ndarray):
         pass
 
 
 class Linear(Layer):
-    """Linear.
+    """Linear Layer.
 
-    A linear layer. Equivalent to Dense in Keras and to torch.nn.Linear
-    in torch.
+    A linear layer. Equivalent to Dense in Keras and to torch.nn.Linear in torch.
 
     Parameters
     ----------
@@ -38,22 +40,20 @@ class Linear(Layer):
 
     """
 
-    def __init__(self, input_dim, output_dim):
-
-        #self.weights = np.random.uniform(low=-0.05, high=0.05, size=(output_dim, input_dim))
-        #self.biases = np.random.uniform(low=-0.05, high=0.05, size=(output_dim, 1))
+    def __init__(self, input_dim: int, output_dim: int):
+        super().__init__()
         self.weights = np.random.rand(output_dim, input_dim)
         self.biases = np.random.rand(output_dim, 1)
         self.units = output_dim
         self.type = 'Linear'
 
-    def _len_(self):
+    def __len__(self) -> int:
         return self.units
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.type} Layer"
 
-    def forward(self, input_val):
+    def forward(self, input_val: np.ndarray) -> np.ndarray:
         """Forward.
 
         Performs forward propagation of this layer.
@@ -72,7 +72,7 @@ class Linear(Layer):
         self._prev_acti = input_val
         return np.matmul(self.weights, input_val) + self.biases
 
-    def backward(self, dA):
+    def backward(self, dA: np.ndarray):
         """Backward.
 
         Performs backward propagation of this layer.
@@ -131,6 +131,7 @@ class ReLU(Layer):
     """
 
     def __init__(self, output_dim):
+        super().__init__()
         self.units = output_dim
         self.type = 'ReLU'
 
