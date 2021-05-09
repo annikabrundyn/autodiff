@@ -19,22 +19,6 @@ X_test = scaler.transform(X_test)
 
 Y = y_train
 
-#data = generate_data(samples=10000, shape_type='circles', noise=0.04)
-#X = data[['x', 'y']].values
-#Y = data['label'].T.values
-
-#X, Y = load_breast_cancer(return_X_y=True)
-
-# our model takes in the shape (feats, samples)
-#X = X.T
-#Y = np.reshape(Y, (1, len(Y)))
-
-
-# define the data - two features, single sample
-#X = np.random.rand(2, 1000)
-#Y = np.random.rand(1000)
-
-
 
 losses = []
 
@@ -48,9 +32,10 @@ model.add(Linear(2, 1))
 model.add(Sigmoid(1))
 
 
-for epoch in range(10000):
+for epoch in range(1000000):
 
     # forward
+    # our model takes in the shape (feats, samples)
     pred = model(X.T)
 
     loss_f = BCE(pred, Y)
@@ -73,5 +58,3 @@ for epoch in range(10000):
     if epoch % 100:
         print("current loss: ", error)
 
-
-#print("hi")
