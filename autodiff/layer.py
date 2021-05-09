@@ -124,7 +124,8 @@ class ReLU(Layer):
             delta: Upcoming gradient.
 
         """
-        return dJ * np.heaviside(self._prev_val, 0)
+        #return dJ * np.heaviside(self._prev_val, 0)
+        return dJ * np.where(self._prev_val <= 0, 0.0, 1.0)
 
 
 class Sigmoid(Layer):
