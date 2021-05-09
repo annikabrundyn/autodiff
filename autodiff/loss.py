@@ -29,15 +29,18 @@ class BCE(Layer):
     error of the following layer.
     """
 
-    def __init__(self, pred: np.ndarray, target: np.ndarray):
+    def __init__(self, ):
         super().__init__('BCE Loss', 1)
+        #self.pred = pred
+        #self.target = target
+
+    def __call__(self, pred: np.ndarray, target: np.ndarray) -> np.ndarray:
+        return self.forward(pred, target)
+
+    def forward(self, pred: np.ndarray, target: np.ndarray) -> np.ndarray:
         self.pred = pred
         self.target = target
 
-    def __call__(self) -> np.ndarray:
-        return self.forward()
-
-    def forward(self) -> np.ndarray:
         n = len(self.target)
         loss = np.nansum(-self.target * np.log(self.pred) - (1 - self.target) * np.log(1 - self.pred)) / n
 
