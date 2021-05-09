@@ -1,7 +1,7 @@
-# autodiff 
+# Building and training a vanilla neural network from scratch
 
-[WIP]
-this is a basic automatic differentiation library in python and numpy.
+The goal of this project was to better understand autodiff....
+todo WRITE THIS
 
 todos:
 1. pretty code: adding tests, adding comments (@annika) - put the backward into a function
