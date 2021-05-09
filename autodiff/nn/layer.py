@@ -18,11 +18,11 @@ class Layer(ABC):
         return f"{self.type} Layer"
 
     @abstractmethod
-    def forward(self, input_val: np.ndarray) -> np.ndarray:
+    def forward(self, *args, **kwargs) -> np.ndarray:
         pass
 
     @abstractmethod
-    def backward(self, dA: np.ndarray) -> np.ndarray:
+    def backward(self, *args, **kwargs) -> np.ndarray:
         pass
 
 
