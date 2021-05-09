@@ -40,16 +40,8 @@ for epoch in range(1000000):
     error = loss_f()
     losses.append(error)
 
-    gradient = loss_f.backward()
-
     # Backpropagation - could implement our own optimizer?
-    model.update_weights(gradient, lr=0.05)
-    # for i, _ in reversed(list(enumerate(model.layers))):
-    #     if model.layers[i].type != 'Linear':
-    #         gradient = model.layers[i].backward(gradient)
-    #     else:
-    #         gradient, dW, dB = model.layers[i].backward(gradient)
-    #         model.layers[i].optimize(dW, dB, 0.05)
+    model.update_weights(loss_f, lr=0.05)
 
     if epoch % 10000:
         print("current loss: ", error)

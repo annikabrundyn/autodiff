@@ -23,7 +23,8 @@ class Model:
             X = forward
         return forward
 
-    def update_weights(self, gradient, lr):
+    def update_weights(self, loss_f, lr):
+        gradient = loss_f.backward()
         # backprop and weight update
         for i, _ in reversed(list(enumerate(self.layers))):
             if self.layers[i].type != 'Linear':
