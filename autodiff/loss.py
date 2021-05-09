@@ -8,15 +8,15 @@ class MSE(Layer):
     error of the following layer.
     """
 
-    def __init__(self, pred: np.ndarray, target: np.ndarray):
+    def __init__(self):
         super().__init__('MSE Loss', 1)
-        self.pred = pred
-        self.target = target
 
-    def __call__(self) -> np.ndarray:
-        return self.forward(self.pred, self.target)
+    def __call__(self,  pred: np.ndarray, target: np.ndarray) -> np.ndarray:
+        return self.forward(pred, target)
 
     def forward(self, pred: np.ndarray, target: np.ndarray) -> np.ndarray:
+        self.pred = pred
+        self.target = target
         return np.power(self.pred - self.target, 2).mean()
 
     def backward(self) -> np.ndarray:
@@ -31,8 +31,6 @@ class BCE(Layer):
 
     def __init__(self, ):
         super().__init__('BCE Loss', 1)
-        #self.pred = pred
-        #self.target = target
 
     def __call__(self, pred: np.ndarray, target: np.ndarray) -> np.ndarray:
         return self.forward(pred, target)
