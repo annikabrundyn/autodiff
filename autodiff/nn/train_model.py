@@ -5,9 +5,8 @@ from sklearn.datasets import make_classification, load_iris, load_boston, load_b
 from sklearn import preprocessing
 from sklearn.model_selection import train_test_split
 
-import numpy as np
 
-
+### Make dataset
 X, y = make_classification(n_samples=10000, n_features=2, n_informative=2, n_redundant=0, random_state=42)
 X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=42)
 
@@ -18,9 +17,7 @@ X_test = scaler.transform(X_test)
 Y = y_train
 
 
-losses = []
-
-# define the model
+### Define the model
 model = Model()
 model.add(Linear(2, 5))
 model.add(ReLU(5))
@@ -29,6 +26,9 @@ model.add(ReLU(2))
 model.add(Linear(2, 1))
 model.add(Sigmoid(1))
 
+
+
+losses = []
 
 for epoch in range(1000000):
 
@@ -49,8 +49,6 @@ for epoch in range(1000000):
             gradient = model.layers[i].backward(gradient)
         else:
             gradient, dW, dB = model.layers[i].backward(gradient)
-            #self.weights = self.weights - rate * dW
-            #self.biases = self.biases - rate * dB
             model.layers[i].optimize(dW, dB, 0.05)
 
     if epoch % 100:
