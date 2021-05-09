@@ -6,31 +6,30 @@ from typing import Tuple
 class Layer(ABC):
     """abstract class of Layer"""
 
-    @abstractmethod
-    def __init__(self):
-        pass
+    def __init__(self, layer_type: str, output_dim: int):
+        self.type = layer_type
+        self.units = output_dim
+        self._prev_val = None
 
-    @abstractmethod
-    def __len__(self):
-        pass
+    def __len__(self) -> int:
+        return self.units
 
-    @abstractmethod
     def __str__(self):
+        return f"{self.type} Layer"
+
+    @abstractmethod
+    def forward(self, input_val: np.ndarray) -> np.ndarray:
         pass
 
     @abstractmethod
-    def forward(self, input_val: np.ndarray):
-        pass
-
-    @abstractmethod
-    def backward(self, dA: np.ndarray):
+    def backward(self, dA: np.ndarray) -> np.ndarray:
         pass
 
 
 class Linear(Layer):
     """Linear Layer.
 
-    A linear layer. Equivalent to Dense in Keras and to torch.nn.Linear in torch.
+    Equivalent to Dense in Keras and to torch.nn.Linear in torch.
 
     Parameters
     ----------
@@ -38,52 +37,38 @@ class Linear(Layer):
         Number of input features of this layer.
     output_dim : int
         Number of output features of this layer.
-
     """
 
     def __init__(self, input_dim: int, output_dim: int):
-        super().__init__()
+        super().__init__('Linear', output_dim)
         self.weights = np.random.rand(output_dim, input_dim)
         self.biases = np.random.rand(output_dim, 1)
-        self.units = output_dim
-        self.type = 'Linear'
-        self._prev_val = None
-
-    def __len__(self) -> int:
-        return self.units
-
-    def __str__(self) -> str:
-        return f"{self.type} Layer"
 
     def forward(self, input_val: np.ndarray) -> np.ndarray:
         """Forward.
 
         Performs forward propagation of this layer.
 
-        Parameters
-        ----------
+        Parameters:
         input_val : numpy.Array
             Forward propagation of the previous layer.
-
         Returns
         -------
         activation : numpy.Array
             Forward propagation operation of the linear layer.
-
         """
         self._prev_val = input_val
         return np.matmul(self.weights, self._prev_val) + self.biases
 
-    def backward(self, dA: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+    def backward(self, dJ: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Backward.
 
-        Performs backward propagation of this layer.
+        Computes backward propagation pass of this layer.
 
         Parameters
         ----------
-        dA : numpy.Array
+        dJ : numpy.Array
             Gradient of the next layer.
-
         Returns
         -------
         delta : numpy.Array
@@ -93,10 +78,10 @@ class Linear(Layer):
         dB : numpy.Array
             Biases gradient of this layer.
         """
-        dW = np.dot(dA, self._prev_val.T)
-        dB = dA.mean(axis=1, keepdims=True)
+        dW = np.dot(dJ, self._prev_val.T)
+        dB = dJ.mean(axis=1, keepdims=True)
 
-        delta = np.dot(self.weights.T, dA)
+        delta = np.dot(self.weights.T, dJ)
 
         return delta, dW, dB
 
@@ -114,36 +99,24 @@ class Linear(Layer):
             Biases gradient.
         rate: float
             Learning rate of the gradient descent.
-
         """
         self.weights = self.weights - rate * dW
         self.biases = self.biases - rate * dB
 
 
 class ReLU(Layer):
-    """ReLU.
-
-    Rectified linear unit layer.
+    """ReLU Layer.
 
     Parameters
     ----------
     output_dim : int
         Number of neurons in this layer.
-
     """
 
-    def __init__(self, output_dim):
-        super().__init__()
-        self.units = output_dim
-        self.type = 'ReLU'
+    def __init__(self, output_dim: int):
+        super().__init__('ReLU', output_dim)
 
-    def __len__(self):
-        return self.units
-
-    def __str__(self):
-        return f"{self.type} Layer"
-
-    def forward(self, input_val):
+    def forward(self, input_val: np.ndarray) -> np.ndarray:
         """Forward.
 
         Computes forward propagation pass of this layer.
@@ -152,111 +125,120 @@ class ReLU(Layer):
         ----------
         input_val : numpy.Array
             Forward propagation of the previous layer.
-
         Returns
         -------
-        _prev_acti : numpy.Array
+        activation : numpy.Array
             Forward propagation of this layer.
-
         """
-        self._prev_acti = np.maximum(0, input_val)
-        return self._prev_acti
+        self._prev_val = np.maximum(0, input_val)
+        return self._prev_val
 
-    def backward(self, dJ):
-        return dJ * np.heaviside(self._prev_acti, 0)
+    def backward(self, dJ: np.ndarray) -> np.ndarray:
+        """Backward.
+
+        Computes backward propagation pass of this layer.
+
+        Parameters
+        ----------
+        dJ : numpy.Array
+            Gradient of the next layer.
+        Returns
+        -------
+        delta : numpy.Array
+            Upcoming gradient.
+        """
+        return dJ * np.heaviside(self._prev_val, 0)
 
 
 class Sigmoid(Layer):
-    """Sigmoid.
-    Sigmoid layer.
+    """Sigmoid Layer.
+
     Parameters
     ----------
     output_dim : int
         Number of neurons in this layers.
-
     """
 
-    def __init__(self, output_dim):
-        self.units = output_dim
-        self.type = 'Sigmoid'
+    def __init__(self, output_dim: int):
+        super().__init__('Sigmoid', output_dim)
 
-    def __len__(self):
-        return self.units
-
-    def __str__(self):
-        return f"{self.type} Layer"
-
-    def forward(self, input_val):
+    def forward(self, input_val: np.ndarray) -> np.ndarray:
         """Forward.
+
         Computes forward propagation pass of this layer.
+
         Parameters
         ----------
         input_val : numpy.Array
             Forward propagation of the previous layer.
-
         Returns
         -------
-        _prev_acti : numpy.Array
+        activation : numpy.Array
             Forward propagation of this layer.
-
         """
-        self._prev_acti = 1 / (1 + np.exp(-input_val))
-        return self._prev_acti
+        self._prev_val = 1 / (1 + np.exp(-input_val))
+        return self._prev_val
 
-    def backward(self, dJ):
+    def backward(self, dJ: np.ndarray):
         """Backward.
+
         Computes backward propagation pass of this layer.
-        Returns
+
+        Parameters
         -------
         dJ : numpy.Array
             Gradient of this layer.
+        Returns
+        -------
+        delta : numpy.Array
+            Upcoming gradient.
         """
-        sig = self._prev_acti
+        sig = self._prev_val
         return dJ * sig * (1 - sig)
 
 
 class Tanh(Layer):
     """Tanh.
+
     Hyperbolic tangent layer.
+
     Parameters
     ----------
     output_dim : int
         Number of neurons in this layers.
     """
 
-    def __init__(self, output_dim):
-        self.units = output_dim
-        self.type = 'Tanh'
+    def __init__(self, output_dim: int):
+        super().__init__('Tanh', output_dim)
 
-    def __len__(self):
-        return self.units
-
-    def __str__(self):
-        return f"{self.type} Layer"
-
-    def forward(self, input_val):
+    def forward(self, input_val: np.ndarray) -> np.ndarray:
         """Forward.
+
         Computes forward propagation pass of this layer.
+
         Parameters
         ----------
         input_val : numpy.Array
             Forward propagation of the previous layer.
-
         Returns
         -------
-        _prev_acti : numpy.Array
+        activation : numpy.Array
             Forward propagation of this layer.
-
         """
-        self._prev_acti = np.tanh(input_val)
-        return self._prev_acti
+        self._prev_val = np.tanh(input_val)
+        return self._prev_val
 
-    def backward(self, dJ):
+    def backward(self, dJ: np.ndarray) -> np.ndarray:
         """Backward.
+
         Computes backward propagation pass of this layer.
+
+        Parameters
+        ----------
+        dJ : numpy.Array
+            Gradient of the next layer.
         Returns
         -------
-        dJ : numpy.Array
-            Gradient of this layer.
+        delta : numpy.Array
         """
-        return dJ * (1 - np.square(self._prev_acti))
+        return dJ * (1 - np.square(self._prev_val))
