@@ -15,3 +15,18 @@ TODOS:
 
 cupy for extending to gpus:
 https://cupy.dev/#features
+
+
+
+## How to run
+
+first install the project:
+```bash
+cd autodiff
+pip install -e .
+```
+
+then train the model:
+```bash
+python train_model.py
+```
