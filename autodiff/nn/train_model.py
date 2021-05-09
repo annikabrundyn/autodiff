@@ -4,26 +4,27 @@ from loss import BCE, MSE
 from sklearn.datasets import make_classification, load_iris, load_boston, load_breast_cancer
 from sklearn import preprocessing
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
 
+
+THRESHOLD = 0.5
 
 ### Make dataset
-X, y = make_classification(n_samples=10000, n_features=2, n_informative=2, n_redundant=0, random_state=42)
-X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=42)
+X, Y = make_classification(n_samples=10000, n_features=3, n_informative=2, n_redundant=1, random_state=42)
 
-scaler = preprocessing.MinMaxScaler().fit(X_train)
-X = scaler.transform(X_train)
-X_test = scaler.transform(X_test)
 
-Y = y_train
+#scaler = preprocessing.MinMaxScaler().fit(X_train)
+#X = scaler.transform(X_train)
+#X_test = scaler.transform(X_test)
 
 
 ### Define the model
 model = Model()
-model.add(Linear(2, 5))
+model.add(Linear(3, 10))
+model.add(ReLU(10))
+model.add(Linear(10, 5))
 model.add(ReLU(5))
-model.add(Linear(5, 2))
-model.add(ReLU(2))
-model.add(Linear(2, 1))
+model.add(Linear(5, 1))
 model.add(Sigmoid(1))
 
 
@@ -51,6 +52,8 @@ for epoch in range(1000000):
             gradient, dW, dB = model.layers[i].backward(gradient)
             model.layers[i].optimize(dW, dB, 0.05)
 
-    if epoch % 100:
+    if epoch % 10000:
         print("current loss: ", error)
+        pred_label = (pred >= THRESHOLD).astype('int')
+        print("current accuracy: ", accuracy_score(Y, pred_label.squeeze()))
 
