@@ -8,6 +8,9 @@ class Model:
         self.layers = []
         self.loss = []
 
+    def __call__(self, X: np.ndarray) -> np.ndarray:
+        return self.predict(X)
+
     def add(self, layer: Layer):
         # Add layer to sequential list of model layers
         self.layers.append(layer)
@@ -20,8 +23,16 @@ class Model:
             X = forward
         return forward
 
-    def __call__(self, X: np.ndarray) -> np.ndarray:
-        return self.predict(X)
+    def update_weights(self, gradient, lr):
+        # backprop and weight update
+        for i, _ in reversed(list(enumerate(self.layers))):
+            if self.layers[i].type != 'Linear':
+                gradient = self.layers[i].backward(gradient)
+            else:
+                gradient, dW, dB = self.layers[i].backward(gradient)
+                self.layers[i].optimize(dW, dB, lr)
+
+
 
 
 
