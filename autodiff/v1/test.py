@@ -1,6 +1,5 @@
-from node import Node, Variable
-from ops import *
-from grad import grad
+from v1.ops import *
+from v1.grad import grad
 
 a = Variable(3, name="a")
 b = Variable(4, name="b")
