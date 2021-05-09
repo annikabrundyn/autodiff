@@ -13,14 +13,20 @@ class MSE(Layer):
         self.target = target
         self.type = 'MSE'
 
+    def __len__(self):
+        return 1
+
+    def __str__(self) -> str:
+        return f"{self.type} Loss"
+
+    def __call__(self):
+        return self.forward(self.pred, self.target)
+
     def forward(self, pred, target):
         return np.power(self.pred - self.target, 2).mean()
 
     def backward(self):
         return 2 * (self.pred - self.target).mean()
-
-    def __call__(self):
-        return self.forward(self.pred, self.target)
 
 
 
@@ -35,6 +41,15 @@ class BCE(Layer):
         self.target = target
         self.type = 'BCE'
 
+    def __len__(self):
+        return 1
+
+    def __str__(self) -> str:
+        return f"{self.type} Loss"
+
+    def __call__(self):
+        return self.forward()
+
     def forward(self):
         n = len(self.target)
         loss = np.nansum(-self.target * np.log(self.pred) - (1 - self.target) * np.log(1 - self.pred)) / n
@@ -45,7 +60,9 @@ class BCE(Layer):
         n = len(self.target)
         return (-(self.target / self.pred) + ((1 - self.target) / (1 - self.pred))) / n
 
-    def __call__(self):
-        return self.forward()
+
+
+
+
 
 

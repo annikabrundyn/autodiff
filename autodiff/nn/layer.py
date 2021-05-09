@@ -135,7 +135,7 @@ class ReLU(Layer):
         self.units = output_dim
         self.type = 'ReLU'
 
-    def _len_(self):
+    def __len__(self):
         return self.units
 
     def __str__(self):
@@ -178,7 +178,7 @@ class Sigmoid(Layer):
         self.units = output_dim
         self.type = 'Sigmoid'
 
-    def _len_(self):
+    def __len__(self):
         return self.units
 
     def __str__(self):
@@ -226,7 +226,7 @@ class Tanh(Layer):
         self.units = output_dim
         self.type = 'Tanh'
 
-    def _len_(self):
+    def __len__(self):
         return self.units
 
     def __str__(self):
