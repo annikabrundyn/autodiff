@@ -5,6 +5,7 @@ class Model:
         self.loss = []
 
     def add(self, layer):
+        # Add layer to sequential list of model layers
         self.layers.append(layer)
 
     def predict(self, X):
