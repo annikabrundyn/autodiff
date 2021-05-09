@@ -1,9 +1,7 @@
 from model import Model
 from layer import *
 from loss import BCE, MSE
-from data import generate_data
-from sklearn.datasets import load_iris, load_boston, load_breast_cancer
-from sklearn.datasets import make_classification
+from sklearn.datasets import make_classification, load_iris, load_boston, load_breast_cancer
 from sklearn import preprocessing
 from sklearn.model_selection import train_test_split
 
