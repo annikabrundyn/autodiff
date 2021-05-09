@@ -1,5 +1,6 @@
 import numpy as np
 from abc import ABC, abstractmethod
+from typing import Tuple
 
 
 class Layer(ABC):
@@ -46,6 +47,7 @@ class Linear(Layer):
         self.biases = np.random.rand(output_dim, 1)
         self.units = output_dim
         self.type = 'Linear'
+        self._prev_val = None
 
     def __len__(self) -> int:
         return self.units
@@ -69,10 +71,10 @@ class Linear(Layer):
             Forward propagation operation of the linear layer.
 
         """
-        self._prev_acti = input_val
-        return np.matmul(self.weights, input_val) + self.biases
+        self._prev_val = input_val
+        return np.matmul(self.weights, self._prev_val) + self.biases
 
-    def backward(self, dA: np.ndarray):
+    def backward(self, dA: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Backward.
 
         Performs backward propagation of this layer.
@@ -91,14 +93,14 @@ class Linear(Layer):
         dB : numpy.Array
             Biases gradient of this layer.
         """
-        dW = np.dot(dA, self._prev_acti.T)
+        dW = np.dot(dA, self._prev_val.T)
         dB = dA.mean(axis=1, keepdims=True)
 
         delta = np.dot(self.weights.T, dA)
 
         return delta, dW, dB
 
-    def optimize(self, dW, dB, rate):
+    def optimize(self, dW: np.ndarray, dB: np.ndarray, rate: float):
         """Optimizes.
 
         Performs the optimization of the parameters. For now,
