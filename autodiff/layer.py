@@ -90,76 +90,64 @@ class Linear(Layer):
 
 
 class ReLU(Layer):
-    """ReLU Layer.
-
-    Parameters
-    ----------
-    output_dim : int
-        Number of neurons in this layer.
+    """
+    ReLU non-linearity.
     """
 
     def __init__(self, output_dim: int):
+        """
+        Args:
+            output_dim: number of neurons
+        """
         super().__init__('ReLU', output_dim)
 
     def forward(self, input_val: np.ndarray) -> np.ndarray:
         """Forward.
 
-        Computes forward propagation pass of this layer.
+        Args:
+            input_val: Forward propagation of the previous layer.
 
-        Parameters
-        ----------
-        input_val : numpy.Array
-            Forward propagation of the previous layer.
-        Returns
-        -------
-        activation : numpy.Array
-            Forward propagation of this layer.
+        Returns:
+            activation: Forward propagation of this layer.
+
         """
         self._prev_val = np.maximum(0, input_val)
         return self._prev_val
 
     def backward(self, dJ: np.ndarray) -> np.ndarray:
-        """Backward.
+        """Backward pass.
 
-        Computes backward propagation pass of this layer.
+        Args:
+            dJ: Gradient of the next layer.
 
-        Parameters
-        ----------
-        dJ : numpy.Array
-            Gradient of the next layer.
-        Returns
-        -------
-        delta : numpy.Array
-            Upcoming gradient.
+        Returns:
+            delta: Upcoming gradient.
+
         """
         return dJ * np.heaviside(self._prev_val, 0)
 
 
 class Sigmoid(Layer):
-    """Sigmoid Layer.
-
-    Parameters
-    ----------
-    output_dim : int
-        Number of neurons in this layers.
+    """
+    Sigmoid non-linearity.
     """
 
     def __init__(self, output_dim: int):
+        """
+        Args:
+            output_dim: Number of neurons in this layers
+        """
         super().__init__('Sigmoid', output_dim)
 
     def forward(self, input_val: np.ndarray) -> np.ndarray:
         """Forward.
 
-        Computes forward propagation pass of this layer.
+        Args:
+            input_val: Forward propagation of the previous layer.
 
-        Parameters
-        ----------
-        input_val : numpy.Array
-            Forward propagation of the previous layer.
-        Returns
-        -------
-        activation : numpy.Array
-            Forward propagation of this layer.
+        Returns:
+            activation: Forward propagation of this layer.
+
         """
         self._prev_val = 1 / (1 + np.exp(-input_val))
         return self._prev_val
@@ -167,16 +155,11 @@ class Sigmoid(Layer):
     def backward(self, dJ: np.ndarray):
         """Backward.
 
-        Computes backward propagation pass of this layer.
+        Args:
+            dJ: Gradient of this layer.
 
-        Parameters
-        -------
-        dJ : numpy.Array
-            Gradient of this layer.
-        Returns
-        -------
-        delta : numpy.Array
-            Upcoming gradient.
+        Returns:
+            delta: Upcoming gradient.
         """
         sig = self._prev_val
         return dJ * sig * (1 - sig)
@@ -184,31 +167,23 @@ class Sigmoid(Layer):
 
 class Tanh(Layer):
     """Tanh.
-
-    Hyperbolic tangent layer.
-
-    Parameters
-    ----------
-    output_dim : int
-        Number of neurons in this layers.
     """
 
     def __init__(self, output_dim: int):
+        """
+        Args:
+            output_dim: number of neurons
+        """
         super().__init__('Tanh', output_dim)
 
     def forward(self, input_val: np.ndarray) -> np.ndarray:
         """Forward.
 
-        Computes forward propagation pass of this layer.
+        Args:
+            input_val: Forward propagation of the previous layer.
 
-        Parameters
-        ----------
-        input_val : numpy.Array
-            Forward propagation of the previous layer.
-        Returns
-        -------
-        activation : numpy.Array
-            Forward propagation of this layer.
+        Returns:
+            activation: Forward propagation of this layer.
         """
         self._prev_val = np.tanh(input_val)
         return self._prev_val
@@ -216,14 +191,10 @@ class Tanh(Layer):
     def backward(self, dJ: np.ndarray) -> np.ndarray:
         """Backward.
 
-        Computes backward propagation pass of this layer.
+        Args:
+            dJ: Gradient of the next layer.
 
-        Parameters
-        ----------
-        dJ : numpy.Array
-            Gradient of the next layer.
-        Returns
-        -------
-        delta : numpy.Array
+        Returns:
+            delta : numpy.Array
         """
         return dJ * (1 - np.square(self._prev_val))
