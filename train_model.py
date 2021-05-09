@@ -24,7 +24,7 @@ loss_f = ad.BCE()
 # Train the model
 losses = []
 
-for epoch in range(1000000):
+for epoch in range(1000):
 
     # forward - our model takes input with shape (feats, samples)
     pred = model(X.T)
