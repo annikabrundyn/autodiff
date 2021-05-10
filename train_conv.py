@@ -22,24 +22,12 @@ criterion = ad.BCE()
 # forward
 y_pred = model.forward(x)
 
+loss = criterion.forward(y_pred, y)
 
-loss_value = criterion.forward(y_pred, y)
-deltaL = criterion.backward()
+# backprop
+model.backward(criterion)
 
-
-grads = {}
-
-for i, layer in reversed(list(enumerate(model.layers))):
-    if layer.type == "Softmax":
-        deltaL = model.layers[i].backward(y_pred, y)
-    elif layer.type == "Flatten" or layer.type == "Sigmoid":
-        deltaL = model.layers[i].backward(deltaL)
-    elif layer.type == "Linear" or layer.type == "Conv":
-        deltaL, dW, db = model.layers[i].backward(deltaL)
-        #TODO: separate backward and update into two steps with optimizer
-        #model.layers[i].W['val'] = model.layers[i].W['val'] - lr * dW
-        #model.layers[i].b['val'] = model.layers[i].b['val'] - lr * db
-
-
+# update weights
+model.update_params_sgd(0.01)
 
 print("hi")
