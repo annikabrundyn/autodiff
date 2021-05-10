@@ -54,21 +54,24 @@ class Sigmoid(Layer):
 
 
 ### softmax is a WIP
-# class Softmax(Layer):
-#
-#     def __init__(self, output_dim):
-#         super().__init__('Softmax', output_dim)
-#
-#     def forward(self, X):
-#         """
-#             Compute softmax values for each sets of scores in X.
-#             Parameters:
-#             - X: input vector.
-#             # For numerical stability: make the maximum of z's to be 0.
-#         """
-#         shift_x = X - np.max(X)
-#         e_x = np.exp(shift_x)
-#         return e_x / np.sum(e_x, axis=1)[:, np.newaxis]
-#
-#     def backward(self, y_pred, y):
-#         return y_pred - y
+class Softmax(Layer):
+
+    def __init__(self, output_dim):
+        super().__init__('Softmax', output_dim)
+        self.cache = None
+
+    def forward(self, X):
+        """
+            Compute softmax values for each sets of scores in X.
+            Parameters:
+            - X: input vector.
+            # For numerical stability: make the maximum of z's to be 0.
+        """
+        self.cache = X
+        shift_x = X - np.max(X)
+        e_x = np.exp(shift_x)
+        return e_x / np.sum(e_x, axis=1)[:, np.newaxis]
+
+    def backward(self, new_deltaL):
+        X = self.cache
+        return new_deltaL * (-np.outer(X, X) + np.diag(X.flatten()))
