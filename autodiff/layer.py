@@ -2,7 +2,8 @@ import numpy as np
 from abc import ABC, abstractmethod
 from typing import Tuple
 import math
-
+from utils import get_indices, im2col, col2im
+import numpy as np
 
 class Layer(ABC):
     """abstract layer class"""
@@ -23,6 +24,7 @@ class Layer(ABC):
         pass
 
 
+## non optimized version
 class Conv2D(Layer):
 
     def __init__(self, in_channels, out_channels, filter_size, stride=1, padding=0):
