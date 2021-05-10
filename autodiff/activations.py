@@ -53,11 +53,11 @@ class Sigmoid(Layer):
         return new_deltaL * X * (1 - X)
 
 
-### softmax is a WIP
+### softmax is a WIP - dont know if this is correct at all
 class Softmax(Layer):
 
-    def __init__(self, output_dim):
-        super().__init__('Softmax', output_dim)
+    def __init__(self):
+        super().__init__('Softmax', 1)
         self.cache = None
 
     def forward(self, X):
@@ -74,4 +74,4 @@ class Softmax(Layer):
 
     def backward(self, new_deltaL):
         X = self.cache
-        return new_deltaL * (-np.outer(X, X) + np.diag(X.flatten()))
+        return X * (new_deltaL -(new_deltaL * X).sum(axis=1)[:, None])

@@ -83,7 +83,7 @@ class CategoricalCrossEntropy(Layer):
         batch_size = self.pred.shape[0]
 
         probs = self.pred.copy()
-        probs[np.arange(len(probs), self.target)] -= 1
+        probs[np.arange(len(probs)), self.target] -= 1
 
         return (probs/batch_size)
 
