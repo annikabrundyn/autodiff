@@ -138,19 +138,13 @@ class Softmax(Layer):
 
 class TanH(Layer):
 
-    def __init__(self, alpha=1.7159):
+    def __init__(self):
         super().__init__('TanH', 1)
-        self.alpha = alpha
         self.cache = None
 
     def forward(self, X):
-        """
-            Apply tanh function to X.
-            Parameters:
-            - X: input tensor.
-        """
         self.cache = X
-        return self.alpha * np.tanh(X)
+        return np.tanh(X)
 
     def backward(self, new_deltaL):
         """
