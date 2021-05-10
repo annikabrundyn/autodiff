@@ -9,13 +9,13 @@ class Model:
         self.loss = []
 
     def __call__(self, X: np.ndarray) -> np.ndarray:
-        return self.predict(X)
+        return self.forward(X)
 
     def add(self, layer: Layer):
         # Add layer to sequential list of model layers
         self.layers.append(layer)
 
-    def predict(self, X: np.ndarray) -> np.ndarray:
+    def forward(self, X: np.ndarray) -> np.ndarray:
         # Forward pass
         forward = None
         for i, _ in enumerate(self.layers):

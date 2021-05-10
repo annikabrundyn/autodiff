@@ -141,7 +141,7 @@ class Conv2D(Layer):
 class Linear(Layer):
 
     def __init__(self, column, row):
-        super().__init__("FC", 1)
+        super().__init__("Linear", 1)
         self.row = row
         self.col = column
 

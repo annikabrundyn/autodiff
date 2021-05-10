@@ -18,7 +18,7 @@ model.add(ad.Sigmoid(1))
 criterion = ad.CrossEntropyLoss()
 
 # forward
-y_pred = model.predict(x)
+y_pred = model.forward(x)
 
 loss, deltaL = criterion.get(y_pred, y)
 
@@ -27,7 +27,7 @@ for i, layer in reversed(list(enumerate(model.layers))):
         deltaL = model.layers[i].backward(y_pred, y)
     elif layer.type == "Flatten" or layer.type == "Sigmoid":
         deltaL = model.layers[i].backward(deltaL)
-    elif layer.type == "FC" or layer.type == "Conv":
+    elif layer.type == "Linear" or layer.type == "Conv":
         deltaL, dW, db = model.layers[i].backward(deltaL)
         #TODO: separate backward and update into two steps with optimizer
         model.layers[i].W['val'] = model.layers[i].W['val'] - lr * dW
