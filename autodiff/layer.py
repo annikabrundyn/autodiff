@@ -89,113 +89,69 @@ class Linear(Layer):
         self.biases = self.biases - learning_rate * dB
 
 
-class ReLU(Layer):
-    """
-    ReLU non-linearity.
-    """
 
-    def __init__(self, output_dim: int):
+
+class Conv2D(Layer):
+
+    def __init__(self, input_dim: int, output_dim: int):
         """
         Args:
-            output_dim: number of neurons
+            input_dim: number of  dimensions in the input
+            output_dim: number of dimensions in the output
         """
-        super().__init__('ReLU', output_dim)
+        super().__init__('Conv', output_dim)
+        self.weights = np.random.rand(output_dim, input_dim)
+        self.biases = np.random.rand(output_dim, 1)
 
     def forward(self, input_val: np.ndarray) -> np.ndarray:
-        """Forward.
+        """Performs forward pass of this layer.
 
         Args:
-            input_val: Forward propagation of the previous layer.
+            input_val: value being input to the layer
 
         Returns:
-            activation: Forward propagation of this layer.
+            weights * inputs + biases
 
         """
-        self._prev_val = np.maximum(0, input_val)
-        return self._prev_val
+        self._prev_val = input_val
+        return np.matmul(self.weights, self._prev_val) + self.biases
 
-    def backward(self, dJ: np.ndarray) -> np.ndarray:
-        """Backward pass.
+    def backward(self, dJ: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+        """Back propagation of this layer.
 
         Args:
-            dJ: Gradient of the next layer.
+            dJ : gradient of the next layer.
 
         Returns:
-            delta: Upcoming gradient.
+            delta : upcoming gradient, usually from an activation function.
+            dW : weights gradient of this layer.
+            dB : biases gradient of this layer.
 
         """
-        #return dJ * np.heaviside(self._prev_val, 0)
-        return dJ * np.where(self._prev_val <= 0, 0.0, 1.0)
+        dW = np.dot(dJ, self._prev_val.T)
+        dB = dJ.mean(axis=1, keepdims=True)
 
+        delta = np.dot(self.weights.T, dJ)
 
-class Sigmoid(Layer):
-    """
-    Sigmoid non-linearity.
-    """
+        return delta, dW, dB
 
-    def __init__(self, output_dim: int):
-        """
-        Args:
-            output_dim: Number of neurons in this layers
-        """
-        super().__init__('Sigmoid', output_dim)
+    def optimize(self, dW: np.ndarray, dB: np.ndarray, learning_rate: float):
+        """Optimizes. Updates the weights according to gradient descent.
 
-    def forward(self, input_val: np.ndarray) -> np.ndarray:
-        """Forward.
+        Note:
+            For now, optimization can only be performed using gradient descent.
 
         Args:
-            input_val: Forward propagation of the previous layer.
-
-        Returns:
-            activation: Forward propagation of this layer.
+            dW : Weights gradient.
+            dB : Biases gradient.
+            learning_rate: Learning rate of the gradient descent.
 
         """
-        self._prev_val = 1 / (1 + np.exp(-input_val))
-        return self._prev_val
-
-    def backward(self, dJ: np.ndarray):
-        """Backward.
-
-        Args:
-            dJ: Gradient of this layer.
-
-        Returns:
-            delta: Upcoming gradient.
-        """
-        sig = self._prev_val
-        return dJ * sig * (1 - sig)
+        self.weights = self.weights - learning_rate * dW
+        self.biases = self.biases - learning_rate * dB
 
 
-class Tanh(Layer):
-    """Tanh.
-    """
 
-    def __init__(self, output_dim: int):
-        """
-        Args:
-            output_dim: number of neurons
-        """
-        super().__init__('Tanh', output_dim)
 
-    def forward(self, input_val: np.ndarray) -> np.ndarray:
-        """Forward.
 
-        Args:
-            input_val: Forward propagation of the previous layer.
 
-        Returns:
-            activation: Forward propagation of this layer.
-        """
-        self._prev_val = np.tanh(input_val)
-        return self._prev_val
-
-    def backward(self, dJ: np.ndarray) -> np.ndarray:
-        """Backward.
-
-        Args:
-            dJ: Gradient of the next layer.
-
-        Returns:
-            delta : numpy.Array
-        """
-        return dJ * (1 - np.square(self._prev_val))
