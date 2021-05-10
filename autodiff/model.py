@@ -23,23 +23,11 @@ class Model:
             X = forward
         return forward
 
-    # def update_weights(self, loss_f, lr):
-    #     gradient = loss_f.backward()
-    #     # backprop and weight update
-    #     for i, _ in reversed(list(enumerate(self.layers))):
-    #         if self.layers[i].type != 'Linear':
-    #             gradient = self.layers[i].backward(gradient)
-    #         else:
-    #             gradient, dW, dB = self.layers[i].backward(gradient)
-    #             self.layers[i].optimize(dW, dB, lr)
-
     def backward(self, loss):
 
         deltaL = loss.backward()
 
         for i, layer in reversed(list(enumerate(self.layers))):
-            # if layer.type == "Softmax":
-            #     deltaL = self.layers[i].backward(y_pred, y)
             if layer.type == "Linear" or layer.type == "Conv":
                 deltaL, dW, db = self.layers[i].backward(deltaL)
             else:
