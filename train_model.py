@@ -35,7 +35,7 @@ for epoch in range(1000):
     # Backpropagation - could implement our own optimizer?
     model.update_weights(loss_f, lr=0.05)
 
-    if epoch % 10000:
+    if (epoch % 100) == 0:
         print("current loss: ", error)
         pred_label = (pred >= THRESHOLD).astype('int')
         print("current accuracy: ", accuracy_score(Y, pred_label.squeeze()))
