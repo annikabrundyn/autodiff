@@ -18,7 +18,7 @@ model.add(ad.Linear(16, 10))
 criterion = ad.CategoricalCrossEntropy()
 
 losses = []
-for epoch in range(100):
+for epoch in range(500):
     # forward
     y_pred = model.forward(x)
 
