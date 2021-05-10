@@ -1,5 +1,5 @@
-import torch
-from torch import nn
+import compare_pytorch
+import compare_pytorch.nn as nn
 from sklearn.datasets import make_classification
 from sklearn.metrics import accuracy_score
 
@@ -27,12 +27,12 @@ class Net(nn.Module):
 
 
 X, Y = make_classification(n_samples=10000, n_features=3, n_informative=2, n_redundant=1, random_state=42)
-X, Y = torch.from_numpy(X), torch.from_numpy(Y)
-Y = Y.type(torch.FloatTensor)
+X, Y = compare_pytorch.from_numpy(X), compare_pytorch.from_numpy(Y)
+Y = Y.type(compare_pytorch.FloatTensor)
 model = Net()
 
-optimizer = torch.optim.SGD(model.parameters(), lr=0.05)
-loss_func = torch.nn.BCELoss()
+optimizer = compare_pytorch.optim.SGD(model.parameters(), lr=0.05)
+loss_func = compare_pytorch.nn.BCELoss()
 losses = []
 for epoch in range(1000):
     pred = model(X.float())

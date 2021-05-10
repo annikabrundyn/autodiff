@@ -24,7 +24,6 @@ class Model:
         return forward
 
     def backward(self, loss):
-
         deltaL = loss.backward()
 
         for i, layer in reversed(list(enumerate(self.layers))):
@@ -35,7 +34,7 @@ class Model:
 
     def update_params_sgd(self, lr):
         """
-        Note: currently this only works with SGD - future todo is make this work with Adam optimizer for example
+        Note: currently this only works with SGD
         """
         for i, layer in enumerate(self.layers):
             if layer.type == "Linear" or layer.type == "Conv":
