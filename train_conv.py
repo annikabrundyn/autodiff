@@ -29,7 +29,7 @@ for epoch in range(100):
     model.backward(criterion)
 
     # update weights
-    model.update_params_sgd(lr=0.1)
+    model.update_params_sgd(lr=0.001)
 
     if (epoch % 10) == 0:
         print(f"epoch: {epoch}, current loss: {loss}")
