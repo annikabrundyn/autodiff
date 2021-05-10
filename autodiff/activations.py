@@ -56,17 +56,17 @@ class Sigmoid(Layer):
         return new_deltaL * X * (1 - X)
 
 
-class SoftmaxCE(Layer):
-
-    def __init__(self):
-        super().__init__('Softmax', 1)
-
-    def forward(self, X):
-        e_x = np.exp(X - np.max(X))
-        return e_x / np.sum(e_x, axis=1)[:, np.newaxis]
-
-    def backward(self, y_pred, y):
-        return y_pred - y
+# class SoftmaxCE(Layer):
+#
+#     def __init__(self):
+#         super().__init__('Softmax', 1)
+#
+#     def forward(self, X):
+#         e_x = np.exp(X - np.max(X))
+#         return e_x / np.sum(e_x, axis=1)[:, np.newaxis]
+#
+#     def backward(self, y_pred, y):
+#         return y_pred - y
 
 
 # ### softmax is a WIP - dont know if this is correct at all

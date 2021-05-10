@@ -68,7 +68,6 @@ class CategoricalCrossEntropy(Layer):
         return self.forward(pred, target)
 
     def forward(self, pred: np.ndarray, target: np.ndarray, reduction='mean') -> np.ndarray:
-        #self.pred = pred.clip(min=1e-8, max=None)
         bs = pred.shape[0]
 
         # apply stable softmax
@@ -77,32 +76,15 @@ class CategoricalCrossEntropy(Layer):
         #self.pred = pred.clip(min=1e-8, max=None)
         self.target = target
 
-        # calculate loss
+        # since reduction is mean - should generalize this
         loss = -np.sum(np.log(self.pred[np.arange(bs), self.target])) / bs
+
         return loss
-        #return (np.where(self.target == 1, -np.log(self.pred), 0)).sum(axis=1)
-
-        #loss = - np.log(self.pred[np.arange(len(self.target)), self.target])
-
-        # if reduction == 'mean':
-        #     batch_size = pred.shape[0]
-        #     loss = - np.sum(loss) / batch_size
-        # return loss
 
     def backward(self) -> np.ndarray:
-        # # TODO: CHECK THIS
-        # batch_size = self.pred.shape[0]
-        #
-        # probs = self.pred.copy()
-        # probs[np.arange(len(probs)), self.target] -= 1
-        #
-        # return (probs/batch_size)
         bs = self.pred.shape[0]
         probs = np.copy(self.pred)
         probs[np.arange(bs), self.target] -= 1
-        grad = probs/bs
-        #grad = 1 / len(self.target) * probs.dot(x.T) + reg * self.W
-        #np.where(self.target == 1, -1/probs, 0)
         return probs/bs
 
 

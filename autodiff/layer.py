@@ -192,7 +192,7 @@ class Linear(Layer):
         self.row = row
         self.col = column
 
-        # Xavier-Glorot initialization - used for sigmoid, tanh.
+        # Xavier-Glorot weight initialization
         self.W = {'val': np.random.randn(self.row, self.col) * np.sqrt(1. / self.col), 'grad': 0}
         self.b = {'val': np.random.randn(1, self.row) * np.sqrt(1. / self.row), 'grad': 0}
 
@@ -203,27 +203,16 @@ class Linear(Layer):
         return np.dot(X, self.W['val'].T) + self.b['val']
 
     def backward(self, deltaL):
-        """
-            Returns the error of the current layer and compute gradients.
-            Parameters:
-            - deltaL: error at last layer.
 
-            Returns:
-            - new_deltaL: error at current layer.
-            - self.W['grad']: weights gradient.
-            - self.b['grad']: bias gradient.
-        """
         X = self.cache
         m = X.shape[0]
 
-        # Compute gradient.
+        # Compute and store the gradient.
         self.W['grad'] = (1 / m) * np.dot(deltaL.T, X)
         self.b['grad'] = (1 / m) * np.sum(deltaL, axis=0)
 
         # Compute error.
         new_deltaL = np.dot(deltaL, self.W['val'])
-        # We still need to multiply new_deltaL by the derivative of the activation
-        # function which is done in TanH.backward().
         return new_deltaL, self.W['grad'], self.b['grad']
 
 
