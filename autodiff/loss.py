@@ -47,3 +47,22 @@ class BCE(Layer):
     def backward(self) -> np.ndarray:
         n = len(self.target)
         return (-(self.target / self.pred) + ((1 - self.target) / (1 - self.pred))) / n
+
+
+class CrossEntropyLoss():
+
+    def __init__(self):
+        pass
+
+    def get(self, y_pred, y):
+        """
+            Return the negative log likelihood and the error at the last layer.
+
+            Parameters:
+            - y_pred: model predictions.
+            - y: ground truth labels.
+        """
+        batch_size = y_pred.shape[1]
+        deltaL = y_pred - y
+        loss = -np.sum(y * np.log(y_pred)) / batch_size
+        return loss, deltaL

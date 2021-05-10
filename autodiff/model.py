@@ -33,6 +33,14 @@ class Model:
                 gradient, dW, dB = self.layers[i].backward(gradient)
                 self.layers[i].optimize(dW, dB, lr)
 
+    def get_params(self):
+        params = {}
+        for i, layer in enumerate(self.layers):
+            params['W' + str(i+1)] = layer.W['val']
+            params['b' + str(i+1)] = layer.b['val']
+
+        return params
+
 
 
 
