@@ -1,5 +1,5 @@
-import compare_pytorch
-import compare_pytorch.nn as nn
+import torch
+import torch.nn as nn
 from sklearn.datasets import make_classification
 from sklearn.metrics import accuracy_score
 

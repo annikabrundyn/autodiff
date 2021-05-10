@@ -1,5 +1,5 @@
 import numpy as np
-from layer import Layer
+from autodiff.layer import Layer
 
 
 class ReLU(Layer):
