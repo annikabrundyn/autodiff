@@ -126,8 +126,10 @@ class Softmax(Layer):
             Compute softmax values for each sets of scores in X.
             Parameters:
             - X: input vector.
+            # For numerical stability: make the maximum of z's to be 0.
         """
-        e_x = np.exp(X - np.max(X))
+        shift_x = X - np.max(X)
+        e_x = np.exp(shift_x)
         return e_x / np.sum(e_x, axis=1)[:, np.newaxis]
 
     def backward(self, y_pred, y):
@@ -158,4 +160,4 @@ class TanH(Layer):
             - new_deltaL: error previously computed.
         """
         X = self.cache
-        return new_deltaL * (1 - np.tanh(X) ** 2)
+        return new_deltaL * (1 - np.square(np.tanh(X)))
