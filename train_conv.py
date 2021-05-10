@@ -15,7 +15,7 @@ model.add(ad.Flatten())  #(2, 1, 4, 4)
 model.add(ad.Linear(576, 50))
 model.add(ad.ReLU())
 model.add(ad.Linear(50, 1))
-model.add(ad.Sigmoid(1))
+model.add(ad.Sigmoid())
 
 criterion = ad.BCE()
 
