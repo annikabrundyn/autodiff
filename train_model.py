@@ -1,22 +1,21 @@
 import autodiff as ad
+import numpy as np
 from sklearn.datasets import make_classification
-from sklearn.metrics import accuracy_score
 
-
-# Classification threshold value
-THRESHOLD = 0.5
 
 # Make dataset
-X, Y = make_classification(n_samples=10000, n_features=3, n_informative=2, n_redundant=1, random_state=42)
+X = np.random.rand(100, 3)
+Y = np.random.rand(100, 1)
+
 
 # Define the model
 model = ad.Model()
 model.add(ad.Linear(3, 10))
-model.add(ad.ReLU(10))
+model.add(ad.ReLU())
 model.add(ad.Linear(10, 5))
-model.add(ad.ReLU(5))
+model.add(ad.ReLU())
 model.add(ad.Linear(5, 1))
-model.add(ad.Sigmoid(1))
+model.add(ad.Sigmoid())
 
 # Define the criterion
 loss_f = ad.BCE()
@@ -27,16 +26,17 @@ losses = []
 for epoch in range(1000):
 
     # forward - our model takes input with shape (feats, samples)
-    pred = model(X.T)
+    pred = model(X)
 
     error = loss_f(pred, Y)
     losses.append(error)
 
-    # Backpropagation - could implement our own optimizer?
-    model.update_weights(loss_f, lr=0.05)
+    # Backprop
+    model.backward(loss_f)
+
+    # update the weights using SGD
+    model.update_params_sgd(lr=0.05)
 
     if (epoch % 100) == 0:
         print("current loss: ", error)
-        pred_label = (pred >= THRESHOLD).astype('int')
-        print("current accuracy: ", accuracy_score(Y, pred_label.squeeze()))
 
