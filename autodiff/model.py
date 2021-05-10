@@ -40,10 +40,10 @@ class Model:
         for i, layer in reversed(list(enumerate(self.layers))):
             # if layer.type == "Softmax":
             #     deltaL = self.layers[i].backward(y_pred, y)
-            if layer.type == "Flatten" or layer.type == "Sigmoid":
-                deltaL = self.layers[i].backward(deltaL)
-            elif layer.type == "Linear" or layer.type == "Conv":
+            if layer.type == "Linear" or layer.type == "Conv":
                 deltaL, dW, db = self.layers[i].backward(deltaL)
+            else:
+                deltaL = self.layers[i].backward(deltaL)
 
     def update_params_sgd(self, lr):
         """

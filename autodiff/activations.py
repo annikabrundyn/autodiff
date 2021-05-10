@@ -4,43 +4,43 @@ from typing import Tuple
 from layer import *
 
 
-class ReLU(Layer):
-    """
-    ReLU non-linearity.
-    """
-
-    def __init__(self, output_dim: int):
-        """
-        Args:
-            output_dim: number of neurons
-        """
-        super().__init__('ReLU', output_dim)
-
-    def forward(self, input_val: np.ndarray) -> np.ndarray:
-        """Forward.
-
-        Args:
-            input_val: Forward propagation of the previous layer.
-
-        Returns:
-            activation: Forward propagation of this layer.
-
-        """
-        self._prev_val = np.maximum(0, input_val)
-        return self._prev_val
-
-    def backward(self, dJ: np.ndarray) -> np.ndarray:
-        """Backward pass.
-
-        Args:
-            dJ: Gradient of the next layer.
-
-        Returns:
-            delta: Upcoming gradient.
-
-        """
-        #return dJ * np.heaviside(self._prev_val, 0)
-        return dJ * np.where(self._prev_val <= 0, 0.0, 1.0)
+# class ReLU(Layer):
+#     """
+#     ReLU non-linearity.
+#     """
+#
+#     def __init__(self, output_dim: int):
+#         """
+#         Args:
+#             output_dim: number of neurons
+#         """
+#         super().__init__('ReLU', output_dim)
+#
+#     def forward(self, input_val: np.ndarray) -> np.ndarray:
+#         """Forward.
+#
+#         Args:
+#             input_val: Forward propagation of the previous layer.
+#
+#         Returns:
+#             activation: Forward propagation of this layer.
+#
+#         """
+#         self._prev_val = np.maximum(0, input_val)
+#         return self._prev_val
+#
+#     def backward(self, dJ: np.ndarray) -> np.ndarray:
+#         """Backward pass.
+#
+#         Args:
+#             dJ: Gradient of the next layer.
+#
+#         Returns:
+#             delta: Upcoming gradient.
+#
+#         """
+#         #return dJ * np.heaviside(self._prev_val, 0)
+#         return dJ * np.where(self._prev_val <= 0, 0.0, 1.0)
 
 
 class Sigmoid(Layer):
@@ -79,41 +79,6 @@ class Sigmoid(Layer):
         """
         sig = self._prev_val
         return dJ * sig * (1 - sig)
-
-
-# class Tanh(Layer):
-#     """Tanh.
-#     """
-#
-#     def __init__(self, output_dim: int):
-#         """
-#         Args:
-#             output_dim: number of neurons
-#         """
-#         super().__init__('Tanh', output_dim)
-#
-#     def forward(self, input_val: np.ndarray) -> np.ndarray:
-#         """Forward.
-#
-#         Args:
-#             input_val: Forward propagation of the previous layer.
-#
-#         Returns:
-#             activation: Forward propagation of this layer.
-#         """
-#         self._prev_val = np.tanh(input_val)
-#         return self._prev_val
-#
-#     def backward(self, dJ: np.ndarray) -> np.ndarray:
-#         """Backward.
-#
-#         Args:
-#             dJ: Gradient of the next layer.
-#
-#         Returns:
-#             delta : numpy.Array
-#         """
-#         return dJ * (1 - np.square(self._prev_val))
 
 
 class Softmax(Layer):
@@ -155,3 +120,25 @@ class TanH(Layer):
         """
         X = self.cache
         return new_deltaL * (1 - np.square(np.tanh(X)))
+
+
+
+class ReLU(Layer):
+
+    def __init__(self):
+        super().__init__('ReLU', 1)
+        self.cache = None
+
+    def forward(self, X):
+        self.cache = X
+        return np.maximum(X, 0, X)
+
+    def backward(self, new_deltaL):
+        """
+            Finishes computation of error by multiplying new_deltaL by the
+            derivative of tanH.
+            Parameters:
+            - new_deltaL: error previously computed.
+        """
+        X = self.cache
+        return new_deltaL * np.where(X <= 0, 0.0, 1.0)

@@ -9,9 +9,11 @@ lr = 0.01
 
 model = ad.Model()
 model.add(ad.Conv2D(in_channels=1, out_channels=3, filter_size=3))
+model.add(ad.ReLU())
 model.add(ad.Conv2D(in_channels=3, out_channels=1, filter_size=3))
 model.add(ad.Flatten())  #(2, 1, 4, 4)
 model.add(ad.Linear(576, 50))
+model.add(ad.ReLU())
 model.add(ad.Linear(50, 1))
 model.add(ad.Sigmoid(1))
 
