@@ -7,8 +7,6 @@ y = np.random.rand(2, 1)
 
 lr = 0.01
 
-# TODO: double check what to use for multiclass classification softmax --> cross entropy/nll??
-
 model = ad.Model()
 model.add(ad.Conv2D(in_channels=1, out_channels=3, filter_size=3))
 model.add(ad.Conv2D(in_channels=3, out_channels=1, filter_size=3))
@@ -28,6 +26,6 @@ loss = criterion.forward(y_pred, y)
 model.backward(criterion)
 
 # update weights
-model.update_params_sgd(0.01)
+model.update_params_sgd(lr=0.01)
 
 print("hi")
