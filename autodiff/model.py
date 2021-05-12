@@ -8,7 +8,6 @@ class Model:
     """
     def __init__(self):
         self.layers = []
-        self.loss = []
 
     def __call__(self, X: np.ndarray) -> np.ndarray:
         return self.forward(X)
