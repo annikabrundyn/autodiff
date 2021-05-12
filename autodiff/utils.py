@@ -1,7 +1,11 @@
+"""
+Utility functions to perform Im2Col Transformation in Convolutional Layer.
+
+Code taken from: https://github.com/3outeille/CNNumpy/blob/master/src/fast/utils.py
+
+"""
+
 import numpy as np
-"""
-Got these utils from: https://github.com/3outeille/CNNumpy/blob/master/src/fast/utils.py
-"""
 
 def get_indices(X_shape, HF, WF, stride, pad):
     """
