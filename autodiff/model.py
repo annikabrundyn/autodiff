@@ -4,9 +4,8 @@ from autodiff.layer import Layer
 
 class Model:
     """
-    Base model class
+    Base model class.
     """
-
     def __init__(self):
         self.layers = []
         self.loss = []
@@ -27,6 +26,7 @@ class Model:
         return forward
 
     def backward(self, loss):
+        # Back propagation
         deltaL = loss.backward()
 
         for i, layer in reversed(list(enumerate(self.layers))):
@@ -36,15 +36,14 @@ class Model:
                 deltaL = self.layers[i].backward(deltaL)
 
     def update_params_sgd(self, lr):
-        """
-        Note: currently this only works with SGD
-        """
+        # Note currently this only works with SGD
         for i, layer in enumerate(self.layers):
             if layer.type == "Linear" or layer.type == "Conv":
                 layer.W['val'] += -lr * layer.W['grad']
                 layer.b['val'] += -lr * layer.b['grad']
 
     def zero_grad(self):
+        # Zero the gradients
         for i, layer in enumerate(self.layers):
             if layer.type == "Conv":
                 layer.W['grad'] = np.zeros((layer.n_F, layer.n_C, layer.f, layer.f))
