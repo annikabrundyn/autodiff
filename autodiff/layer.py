@@ -167,23 +167,23 @@ class Conv2D(Layer):
 
         return out
 
-    def backward(self, dout):
+    def backward(self, prev_grad):
         X, X_col, w_col = self.cache
-        m, _, _, _ = X.shape
+        bs = X.shape[0]
 
         # Compute bias gradient.
-        self.b['grad'] = np.sum(dout, axis=(0, 2, 3))
+        self.b['grad'] = np.sum(prev_grad, axis=(0, 2, 3))
 
-        # Reshape dout properly.
-        dout = dout.reshape(dout.shape[0] * dout.shape[1], dout.shape[2] * dout.shape[3])
-        dout = np.array(np.vsplit(dout, m))
-        dout = np.concatenate(dout, axis=-1)
+        # Reshape prev_grad properly.
+        prev_grad = prev_grad.reshape(prev_grad.shape[0] * prev_grad.shape[1], prev_grad.shape[2] * prev_grad.shape[3])
+        prev_grad = np.array(np.vsplit(prev_grad, bs))
+        prev_grad = np.concatenate(prev_grad, axis=-1)
 
-        # Perform matrix multiplication between reshaped dout and w_col to get dX_col.
-        dX_col = w_col.T @ dout
+        # Perform matrix multiplication between reshaped prev_grad and w_col to get dX_col.
+        dX_col = w_col.T @ prev_grad
 
-        # Perform matrix multiplication between reshaped dout and X_col to get dW_col.
-        dw_col = dout @ X_col.T
+        # Perform matrix multiplication between reshaped prev_grad and X_col to get dW_col.
+        dw_col = prev_grad @ X_col.T
 
         # Reshape back to image (col2im).
         dX = col2im(dX_col, X.shape, self.kernel_size, self.kernel_size, self.stride, self.pad)
