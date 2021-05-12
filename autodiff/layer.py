@@ -4,7 +4,6 @@ from abc import ABC, abstractmethod
 from autodiff.utils import im2col, col2im
 
 
-
 class Layer(ABC):
     """abstract layer class"""
 
