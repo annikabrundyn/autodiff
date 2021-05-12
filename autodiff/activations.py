@@ -6,7 +6,7 @@ class ReLU(Layer):
 
     def __init__(self):
         super().__init__('ReLU')
-        self.cache = None
+        #self.cache = None
 
     def forward(self, X):
         # self.cache = X
@@ -23,7 +23,7 @@ class TanH(Layer):
 
     def __init__(self):
         super().__init__('TanH')
-        self.cache = None
+        #self.cache = None
 
     def forward(self, X):
         self.cache = X
@@ -38,7 +38,7 @@ class Sigmoid(Layer):
 
     def __init__(self):
         super().__init__('Sigmoid')
-        self.cache = None
+        #self.cache = None
 
     def forward(self, X):
         self.cache = X

@@ -18,7 +18,7 @@ model.add(ad.Linear(5, 1))
 model.add(ad.Sigmoid())
 
 # Define the criterion
-loss_f = ad.BCE()
+loss_f = ad.BinaryCrossEntropy()
 
 # Train the model
 losses = []
@@ -35,7 +35,7 @@ for epoch in range(1000):
     model.backward(loss_f)
 
     # update the weights using SGD
-    model.update_params_sgd(lr=0.05)
+    model.update_params_sgd(lr=0.1)
 
     if (epoch % 100) == 0:
         print("current loss: ", error)

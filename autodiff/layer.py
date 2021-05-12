@@ -174,7 +174,7 @@ class Linear(Layer):
         self.W = {'val': np.random.randn(self.row, self.col) * np.sqrt(1. / self.col), 'grad': 0}
         self.b = {'val': np.random.randn(1, self.row) * np.sqrt(1. / self.row), 'grad': 0}
 
-        self.cache = None
+        #self.cache = None
 
     def forward(self, X):
         self.cache = X
