@@ -1,7 +1,6 @@
 import numpy as np
 from abc import ABC, abstractmethod
 from typing import Tuple
-import math
 from autodiff.utils import get_indices, im2col, col2im
 import numpy as np
 
@@ -21,6 +20,23 @@ class Layer(ABC):
         pass
 
 
+class Flatten(Layer):
+    """
+    Flattens a contiguous range of dimensions. Used when going from Conv2D --> Linear Layer
+    """
+    def __init__(self, start_dim=1, end_dim=-1):
+        super().__init__('Flatten')
+        self.start_dim = start_dim
+        self.end_dim = end_dim
+
+    def forward(self, X):
+        self.old_shape = X.shape
+        return X.reshape(X.shape[0], -1)
+
+    def backward(self, deltaL):
+        return deltaL.reshape(*self.old_shape)
+
+
 ### im2col version
 class Conv2D(Layer):
 
@@ -32,10 +48,22 @@ class Conv2D(Layer):
         self.s = stride
         self.p = padding
 
-        # Xavier initialization
-        self.W = {'val': np.random.randn(self.n_F, self.n_C, self.f, self.f) * np.sqrt(1. / (self.f)),
-                  'grad': np.zeros((self.n_F, self.n_C, self.f, self.f))}
-        self.b = {'val': np.random.randn(self.n_F) * np.sqrt(1. / self.n_F), 'grad': np.zeros((self.n_F))}
+        # Initialize the weights
+        self._init_weights()
+
+    def _init_weights(self, type="xavier"):
+        if type == "xavier":
+            bound = np.sqrt(1 / (self.f))
+            self.W = {'val': np.random.randn(self.n_F, self.n_C, self.f, self.f) * bound,
+                      'grad': np.zeros((self.n_F, self.n_C, self.f, self.f))}
+            self.b = {'val': np.random.randn(self.n_F) * bound,
+                      'grad': np.zeros((self.n_F))}
+
+        elif type == "random":
+            self.W = {'val': np.random.randn(self.n_F, self.n_C, self.f, self.f),
+                      'grad': np.zeros((self.n_F, self.n_C, self.f, self.f))}
+            self.b = {'val': np.random.randn(self.n_F),
+                      'grad': np.zeros((self.n_F))}
 
     def forward(self, X):
         m, n_C_prev, n_H_prev, n_W_prev = X.shape
@@ -47,36 +75,42 @@ class Conv2D(Layer):
         X_col = im2col(X, self.f, self.f, self.s, self.p)
         w_col = self.W['val'].reshape((self.n_F, -1))
         b_col = self.b['val'].reshape(-1, 1)
+
         # Perform matrix multiplication.
         out = w_col @ X_col + b_col
+
         # Reshape back matrix to image.
         out = np.array(np.hsplit(out, m)).reshape((m, n_C, n_H, n_W))
+
         self.cache = X, X_col, w_col
+
         return out
 
     def backward(self, dout):
         X, X_col, w_col = self.cache
         m, _, _, _ = X.shape
+
         # Compute bias gradient.
         self.b['grad'] = np.sum(dout, axis=(0, 2, 3))
+
         # Reshape dout properly.
         dout = dout.reshape(dout.shape[0] * dout.shape[1], dout.shape[2] * dout.shape[3])
         dout = np.array(np.vsplit(dout, m))
         dout = np.concatenate(dout, axis=-1)
+
         # Perform matrix multiplication between reshaped dout and w_col to get dX_col.
         dX_col = w_col.T @ dout
+
         # Perform matrix multiplication between reshaped dout and X_col to get dW_col.
         dw_col = dout @ X_col.T
+
         # Reshape back to image (col2im).
         dX = col2im(dX_col, X.shape, self.f, self.f, self.s, self.p)
+
         # Reshape dw_col into dw.
         self.W['grad'] = dw_col.reshape((dw_col.shape[0], self.n_C, self.f, self.f))
 
         return dX, self.W['grad'], self.b['grad']
-
-
-
-
 
 
 # ## non optimized version
@@ -190,21 +224,6 @@ class Linear(Layer):
         return new_deltaL, self.W['grad'], self.b['grad']
 
 
-class Flatten(Layer):
-    """
-    Flattens a contiguous range of dimensions. Used when going from Conv2D --> Linear Layer
-    """
-    def __init__(self, start_dim=1, end_dim=-1):
-        super().__init__('Flatten')
-        self.start_dim = start_dim
-        self.end_dim = end_dim
-
-    def forward(self, X):
-        self.old_shape = X.shape
-        return X.reshape(X.shape[0], -1)
-
-    def backward(self, deltaL):
-        return deltaL.reshape(*self.old_shape)
 
 
 
