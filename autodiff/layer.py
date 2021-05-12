@@ -99,7 +99,7 @@ class Conv2D(Layer):
     def __init__(self,
                  in_channels: int,
                  out_channels: int,
-                 filter_size: int,
+                 kernel_size: int,
                  stride: int = 1,
                  padding: int = 0
                  ):
@@ -114,53 +114,54 @@ class Conv2D(Layer):
         Args:
             in_channels: number of channels in the input image
             out_channels: number of channels produced by the convolution
-            filter_size: size of the convolving kernel. assumed to be square (filter_size x filter_size)
+            kernel_size: size of the convolving kernel. assumed to be square (filter_size x filter_size)
             stride: stride of the convolution (default: 1).
             padding: zero-padding added to both sides of the input (default: 0).
 
         """
         super().__init__('Conv')
-        self.n_C = in_channels
-        self.n_F = out_channels
-        self.f = filter_size
-        self.s = stride
-        self.p = padding
+        self.in_ch = in_channels
+        self.out_ch = out_channels
+        self.kernel_size = kernel_size
+        self.stride = stride
+        self.pad = padding
 
         # Initialize the weights
         self._init_weights()
 
     def _init_weights(self, type="xavier"):
         if type == "xavier":
-            bound = np.sqrt(1 / (self.f))
-            self.W = {'val': np.random.randn(self.n_F, self.n_C, self.f, self.f) * bound,
-                      'grad': np.zeros((self.n_F, self.n_C, self.f, self.f))}
-            self.b = {'val': np.random.randn(self.n_F) * bound,
-                      'grad': np.zeros((self.n_F))}
+            bound = np.sqrt(1 / (self.kernel_size))
+            self.W = {'val': np.random.randn(self.out_ch, self.in_ch, self.kernel_size, self.kernel_size) * bound,
+                      'grad': np.zeros((self.out_ch, self.in_ch, self.kernel_size, self.kernel_size))}
+            self.b = {'val': np.random.randn(self.out_ch) * bound,
+                      'grad': np.zeros((self.out_ch))}
 
         elif type == "random":
-            self.W = {'val': np.random.randn(self.n_F, self.n_C, self.f, self.f),
-                      'grad': np.zeros((self.n_F, self.n_C, self.f, self.f))}
-            self.b = {'val': np.random.randn(self.n_F),
-                      'grad': np.zeros((self.n_F))}
+            self.W = {'val': np.random.randn(self.out_ch, self.in_ch, self.kernel_size, self.kernel_size),
+                      'grad': np.zeros((self.out_ch, self.in_ch, self.kernel_size, self.kernel_size))}
+            self.b = {'val': np.random.randn(self.out_ch),
+                      'grad': np.zeros((self.out_ch))}
 
     def forward(self, X):
-        m, n_C_prev, n_H_prev, n_W_prev = X.shape
+        # batch_size, input channels, height, width of input matrix
+        bs, ch_prev, h_prev, w_prev = X.shape
 
         # Calculate dimensions of output matrix
-        n_C = self.n_F
-        n_H = int((n_H_prev + 2 * self.p - self.f) / self.s) + 1
-        n_W = int((n_W_prev + 2 * self.p - self.f) / self.s) + 1
+        ch_out = self.out_ch
+        h_out = int((h_prev + 2 * self.pad - self.kernel_size) / self.stride) + 1
+        w_out = int((w_prev + 2 * self.pad - self.kernel_size) / self.stride) + 1
 
         # Im2Col transformation
-        X_col = im2col(X, self.f, self.f, self.s, self.p)
-        w_col = self.W['val'].reshape((self.n_F, -1))
+        X_col = im2col(X, self.kernel_size, self.kernel_size, self.stride, self.pad)
+        w_col = self.W['val'].reshape((self.out_ch, -1))
         b_col = self.b['val'].reshape(-1, 1)
 
         # Perform matrix multiplication.
         out = w_col @ X_col + b_col
 
         # Reshape back matrix to image.
-        out = np.array(np.hsplit(out, m)).reshape((m, n_C, n_H, n_W))
+        out = np.array(np.hsplit(out, bs)).reshape((bs, ch_out, h_out, w_out))
 
         self.cache = X, X_col, w_col
 
@@ -185,97 +186,9 @@ class Conv2D(Layer):
         dw_col = dout @ X_col.T
 
         # Reshape back to image (col2im).
-        dX = col2im(dX_col, X.shape, self.f, self.f, self.s, self.p)
+        dX = col2im(dX_col, X.shape, self.kernel_size, self.kernel_size, self.stride, self.pad)
 
         # Reshape dw_col into dw.
-        self.W['grad'] = dw_col.reshape((dw_col.shape[0], self.n_C, self.f, self.f))
+        self.W['grad'] = dw_col.reshape((dw_col.shape[0], self.in_ch, self.kernel_size, self.kernel_size))
 
         return dX, self.W['grad'], self.b['grad']
-
-
-# class Conv2D(Layer):
-#     """
-#     Original non-optimized version
-#     """
-#     def __init__(self, in_channels, out_channels, filter_size, stride=1, padding=0):
-#         super().__init__('Conv', out_channels)
-#         self.n_C = in_channels
-#         self.n_F = out_channels
-#         self.f = filter_size
-#         self.s = stride
-#         self.p = padding
-#
-#         self._init_weights()
-#
-#     def _init_weights(self, type="xavier"):
-#         if type == "xavier":
-#             bound = 1 / np.sqrt(self.f * self.f)
-#             self.W = {'val': np.random.uniform(-bound, bound, size=(self.n_F, self.n_C, self.f, self.f)),
-#                       'grad': np.zeros((self.n_F, self.n_C, self.f, self.f))}
-#
-#             self.b = {'val': np.random.uniform(-bound, bound, size=(self.n_F)),
-#                       'grad': np.zeros((self.n_F))}
-#
-#         elif type == "random":
-#             self.W = {'val': np.random.randn(self.n_F, self.n_C, self.f, self.f),
-#                       'grad': np.zeros((self.n_F, self.n_C, self.f, self.f))}
-#             self.b = {'val': np.random.randn(self.n_F),
-#                       'grad': np.zeros((self.n_F))}
-#
-#     def forward(self, X):
-#         self.cache = X
-#         m, n_C_prev, n_H_prev, n_W_prev = X.shape
-#
-#         # Define output size.
-#         n_C = self.n_F
-#         n_H = int((n_H_prev + 2 * self.p - self.f) / self.s) + 1
-#         n_W = int((n_W_prev + 2 * self.p - self.f) / self.s) + 1
-#
-#         out = np.zeros((m, n_C, n_H, n_W))
-#
-#         for i in range(m):  # For each image.
-#
-#             for c in range(n_C):  # For each channel.
-#
-#                 for h in range(n_H):  # Slide the filter vertically.
-#                     h_start = h * self.s
-#                     h_end = h_start + self.f
-#
-#                     for w in range(n_W):  # Slide the filter horizontally.
-#                         w_start = w * self.s
-#                         w_end = w_start + self.f
-#
-#                         # Element wise multiplication + sum.
-#                         out[i, c, h, w] = np.sum(X[i, :, h_start:h_end, w_start:w_end]
-#                                                  * self.W['val'][c, ...]) + self.b['val'][c]
-#         return out
-#
-#     def backward(self, dout):
-#
-#         X = self.cache
-#
-#         m, n_C, n_H, n_W = X.shape
-#         m, n_C_dout, n_H_dout, n_W_dout = dout.shape
-#
-#         dX = np.zeros(X.shape)
-#
-#         # Compute dW.
-#         for i in range(m):  # For each example.
-#
-#             for c in range(n_C_dout):  # For each channel.
-#
-#                 for h in range(n_H_dout):  # Slide the filter vertically.
-#                     h_start = h * self.s
-#                     h_end = h_start + self.f
-#
-#                     for w in range(n_W_dout):  # Slide the filter horizontally.
-#                         w_start = w * self.s
-#                         w_end = w_start + self.f
-#
-#                         self.W['grad'][c, ...] += dout[i, c, h, w] * X[i, :, h_start:h_end, w_start:w_end]
-#                         dX[i, :, h_start:h_end, w_start:w_end] += dout[i, c, h, w] * self.W['val'][c, ...]
-#         # Compute db.
-#         for c in range(self.n_F):
-#             self.b['grad'][c, ...] = np.sum(dout[:, c, ...])
-#
-#         return dX, self.W['grad'], self.b['grad']
