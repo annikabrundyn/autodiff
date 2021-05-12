@@ -40,6 +40,9 @@ for epoch in range(500):
     # Update the parameters using Stochastic Gradient Descent
     model.update_params_sgd(lr=0.001)
 
+    # zero the gradients
+    model.zero_grad()
+
     if (epoch % 20) == 0:
         print(f"epoch: {epoch}, training loss: {loss}")
 

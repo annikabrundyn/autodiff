@@ -41,6 +41,15 @@ class Model:
                 layer.W['val'] += -lr * layer.W['grad']
                 layer.b['val'] += -lr * layer.b['grad']
 
+    def zero_grad(self):
+        for i, layer in enumerate(self.layers):
+            if layer.type == "Conv":
+                layer.W['grad'] = np.zeros((layer.n_F, layer.n_C, layer.f, layer.f))
+                layer.b['grad'] = np.zeros((layer.n_F))
+            elif layer.type == "Linear":
+                layer.W['grad'] = 0
+                layer.b['grad'] = 0
+
 
 
 
