@@ -38,7 +38,9 @@ class Flatten(Layer):
 
 
 class Linear(Layer):
-
+    """
+    Fully connected layer - similar to PyTorch nn.Linear
+    """
     def __init__(self, column, row):
         super().__init__("Linear")
         self.col = column
@@ -76,7 +78,7 @@ class Linear(Layer):
 
 class Conv2D(Layer):
     """
-    Optimized Im2Col Version
+    2D Convolutional Layer (Optimized Im2Col Version)
     Adapted from:
     """
     def __init__(self, in_channels, out_channels, filter_size, stride=1, padding=0):
@@ -107,10 +109,12 @@ class Conv2D(Layer):
     def forward(self, X):
         m, n_C_prev, n_H_prev, n_W_prev = X.shape
 
+        # Calculate dimensions of output matrix
         n_C = self.n_F
         n_H = int((n_H_prev + 2 * self.p - self.f) / self.s) + 1
         n_W = int((n_W_prev + 2 * self.p - self.f) / self.s) + 1
 
+        # Im2Col transformation
         X_col = im2col(X, self.f, self.f, self.s, self.p)
         w_col = self.W['val'].reshape((self.n_F, -1))
         b_col = self.b['val'].reshape(-1, 1)
