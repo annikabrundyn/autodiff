@@ -1,6 +1,6 @@
 import numpy as np
 """
-Got these utils from: <CITE>
+Got these utils from: https://github.com/3outeille/CNNumpy/blob/master/src/fast/utils.py
 """
 
 def get_indices(X_shape, HF, WF, stride, pad):

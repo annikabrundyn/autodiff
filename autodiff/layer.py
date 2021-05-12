@@ -25,6 +25,12 @@ class Flatten(Layer):
     Flattens a contiguous range of dimensions. Used when going from Conv2D --> Linear Layer
     """
     def __init__(self, start_dim=1, end_dim=-1):
+        """
+
+        Args:
+            start_dim: first dim to flatten (default: 1).
+            end_dim: last dim to flatten (default: -1).
+        """
         super().__init__('Flatten')
         self.start_dim = start_dim
         self.end_dim = end_dim
@@ -39,13 +45,23 @@ class Flatten(Layer):
 
 class Linear(Layer):
     """
-    Fully connected layer - similar to PyTorch nn.Linear
-    Adapted from:
+    Fully connected (linear) layer. Similar to PyTorch Linear Layer.
     """
-    def __init__(self, in_dim, out_dim):
+    def __init__(self, in_features, out_features):
+        """
+        Applies a linear transformation to the incoming data: y = xA^{T} + b.
+        This implementation is adapted from: https://github.com/3outeille/CNNumpy/blob/master/src/fast/layers.py
+
+        Note:
+            By default, it learns an additive bias. In future, we plan to generalize this.
+
+        Args:
+            in_features: size of each input sample
+            out_features: size of each output sample
+        """
         super().__init__("Linear")
-        self.col = in_dim
-        self.row = out_dim
+        self.col = in_features
+        self.row = out_features
 
         self._init_weights()
 
@@ -80,9 +96,27 @@ class Linear(Layer):
 class Conv2D(Layer):
     """
     2D Convolutional Layer (Optimized Im2Col Version)
-    Adapted from:
     """
-    def __init__(self, in_channels, out_channels, filter_size, stride=1, padding=0):
+
+    def __init__(self,
+                 in_channels: int,
+                 out_channels: int,
+                 filter_size: int,
+                 stride: int = 1,
+                 padding: int = 0
+                 ):
+        """
+        The Conv2D layer is inspired by the PyTorch API.
+        The implementation is adapted from: https://github.com/3outeille/CNNumpy/blob/master/src/fast/layers.py
+
+        Args:
+            in_channels: number of channels in the input image
+            out_channels: number of channels produced by the convolution
+            filter_size: size of the convolving kernel. assumed to be square (filter_size x filter_size)
+            stride: stride of the convolution (default: 1).
+            padding: zero-padding added to both sides of the input (default: 0).
+
+        """
         super().__init__('Conv')
         self.n_C = in_channels
         self.n_F = out_channels
