@@ -6,6 +6,7 @@ class ReLU(Layer):
     """
     Rectified Linear Unit (ReLU) non-linearity.
     """
+
     def __init__(self):
         super().__init__('ReLU')
 
@@ -22,6 +23,7 @@ class TanH(Layer):
     """
     Hyperbolic Tangent non-linearity.
     """
+
     def __init__(self):
         super().__init__('TanH')
 
@@ -38,6 +40,7 @@ class Sigmoid(Layer):
     """
     Sigmoid non-linearity.
     """
+
     def __init__(self):
         super().__init__('Sigmoid')
 
