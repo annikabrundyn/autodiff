@@ -17,6 +17,7 @@ class BinaryCrossEntropy(Layer):
         self.target = target
 
         loss = -self.target * np.log(self.pred) - (1 - self.target) * np.log(1 - self.pred)
+
         if reduction == 'mean':
             batch_size = pred.shape[0]
             loss = np.sum(loss) / batch_size
@@ -65,15 +66,14 @@ class CategoricalCrossEntropy(Layer):
         return self.forward(pred, target)
 
     def forward(self, pred: np.ndarray, target: np.ndarray, reduction='mean') -> np.ndarray:
-        bs = pred.shape[0]
-
         # apply stable softmax
         probs = np.exp(pred - np.max(pred))
         self.pred = probs / np.sum(probs, axis=1)[:, np.newaxis]
         self.target = target
 
-        # since reduction is mean - should generalize this
-        loss = -np.sum(np.log(self.pred[np.arange(bs), self.target])) / bs
+        if reduction == 'mean':
+            bs = pred.shape[0]
+            loss = -np.sum(np.log(self.pred[np.arange(bs), self.target])) / bs
 
         return loss
 
