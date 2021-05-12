@@ -32,12 +32,10 @@ class Conv2D(Layer):
         self.s = stride
         self.p = padding
 
-        # Xavier-Glorot initialization - used for sigmoid, tanh.
+        # Xavier initialization
         self.W = {'val': np.random.randn(self.n_F, self.n_C, self.f, self.f) * np.sqrt(1. / (self.f)),
                   'grad': np.zeros((self.n_F, self.n_C, self.f, self.f))}
         self.b = {'val': np.random.randn(self.n_F) * np.sqrt(1. / self.n_F), 'grad': np.zeros((self.n_F))}
-
-        self.cache = None
 
     def forward(self, X):
         m, n_C_prev, n_H_prev, n_W_prev = X.shape
@@ -173,8 +171,6 @@ class Linear(Layer):
         # Xavier weight initialization
         self.W = {'val': np.random.randn(self.row, self.col) * np.sqrt(1. / self.col), 'grad': 0}
         self.b = {'val': np.random.randn(1, self.row) * np.sqrt(1. / self.row), 'grad': 0}
-
-        #self.cache = None
 
     def forward(self, X):
         self.cache = X

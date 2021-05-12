@@ -6,11 +6,8 @@ class ReLU(Layer):
 
     def __init__(self):
         super().__init__('ReLU')
-        #self.cache = None
 
     def forward(self, X):
-        # self.cache = X
-        # return np.maximum(X, 0, X)
         self.cache = np.copy(X)
         return np.clip(X, 0, None)
 
@@ -23,10 +20,9 @@ class TanH(Layer):
 
     def __init__(self):
         super().__init__('TanH')
-        #self.cache = None
 
     def forward(self, X):
-        self.cache = X
+        self.cache = np.copy(X)
         return np.tanh(X)
 
     def backward(self, new_deltaL):
@@ -38,10 +34,9 @@ class Sigmoid(Layer):
 
     def __init__(self):
         super().__init__('Sigmoid')
-        #self.cache = None
 
     def forward(self, X):
-        self.cache = X
+        self.cache = np.copy(X)
         return 1 / (1 + np.exp(-X))
 
     def backward(self, new_deltaL):
