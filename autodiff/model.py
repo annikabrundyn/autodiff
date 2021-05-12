@@ -52,8 +52,3 @@ class Model:
             elif layer.type == "Linear":
                 layer.W['grad'] = 0
                 layer.b['grad'] = 0
-
-
-
-
-
