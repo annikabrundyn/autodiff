@@ -1,7 +1,7 @@
 import numpy as np
 from abc import ABC, abstractmethod
 from typing import Tuple
-from autodiff.utils import get_indices, im2col, col2im
+from autodiff.utils import im2col, col2im
 import numpy as np
 
 
@@ -37,9 +37,48 @@ class Flatten(Layer):
         return deltaL.reshape(*self.old_shape)
 
 
-### im2col version
-class Conv2D(Layer):
+class Linear(Layer):
 
+    def __init__(self, column, row):
+        super().__init__("Linear")
+        self.col = column
+        self.row = row
+
+        self._init_weights()
+
+    def _init_weights(self, type="xavier"):
+        if type == "xavier":
+            bound = np.sqrt(1. / self.col)
+            self.W = {'val': np.random.randn(self.row, self.col) * bound, 'grad': 0}
+            self.b = {'val': np.random.randn(1, self.row) * bound, 'grad': 0}
+
+        elif type == "random":
+            self.W = {'val': np.random.randn(self.row, self.col), 'grad': 0}
+            self.b = {'val': np.random.randn(1, self.row), 'grad': 0}
+
+    def forward(self, X):
+        self.cache = X
+        return np.dot(X, self.W['val'].T) + self.b['val']
+
+    def backward(self, deltaL):
+
+        X = self.cache
+        m = X.shape[0]
+
+        # Compute and store the gradient.
+        self.W['grad'] = (1 / m) * np.dot(deltaL.T, X)
+        self.b['grad'] = (1 / m) * np.sum(deltaL, axis=0)
+
+        # Compute error.
+        new_deltaL = np.dot(deltaL, self.W['val'])
+        return new_deltaL, self.W['grad'], self.b['grad']
+
+
+class Conv2D(Layer):
+    """
+    Optimized Im2Col Version
+    Adapted from:
+    """
     def __init__(self, in_channels, out_channels, filter_size, stride=1, padding=0):
         super().__init__('Conv')
         self.n_C = in_channels
@@ -113,11 +152,11 @@ class Conv2D(Layer):
         return dX, self.W['grad'], self.b['grad']
 
 
-# ## non optimized version
 # class Conv2D(Layer):
-#
+#     """
+#     Original non-optimized version
+#     """
 #     def __init__(self, in_channels, out_channels, filter_size, stride=1, padding=0):
-#
 #         super().__init__('Conv', out_channels)
 #         self.n_C = in_channels
 #         self.n_F = out_channels
@@ -125,16 +164,22 @@ class Conv2D(Layer):
 #         self.s = stride
 #         self.p = padding
 #
-#         # Xavier initialization.
-#         # TODO: should math be replaced with np
-#         bound = 1 / math.sqrt(self.f * self.f)
-#         self.W = {'val': np.random.uniform(-bound, bound, size=(self.n_F, self.n_C, self.f, self.f)),
-#                   'grad': np.zeros((self.n_F, self.n_C, self.f, self.f))}
+#         self._init_weights()
 #
-#         self.b = {'val': np.random.uniform(-bound, bound, size=(self.n_F)),
-#                   'grad': np.zeros((self.n_F))}
+#     def _init_weights(self, type="xavier"):
+#         if type == "xavier":
+#             bound = 1 / np.sqrt(self.f * self.f)
+#             self.W = {'val': np.random.uniform(-bound, bound, size=(self.n_F, self.n_C, self.f, self.f)),
+#                       'grad': np.zeros((self.n_F, self.n_C, self.f, self.f))}
 #
-#         self.cache = None
+#             self.b = {'val': np.random.uniform(-bound, bound, size=(self.n_F)),
+#                       'grad': np.zeros((self.n_F))}
+#
+#         elif type == "random":
+#             self.W = {'val': np.random.randn(self.n_F, self.n_C, self.f, self.f),
+#                       'grad': np.zeros((self.n_F, self.n_C, self.f, self.f))}
+#             self.b = {'val': np.random.randn(self.n_F),
+#                       'grad': np.zeros((self.n_F))}
 #
 #     def forward(self, X):
 #         self.cache = X
@@ -193,38 +238,3 @@ class Conv2D(Layer):
 #             self.b['grad'][c, ...] = np.sum(dout[:, c, ...])
 #
 #         return dX, self.W['grad'], self.b['grad']
-
-
-class Linear(Layer):
-
-    def __init__(self, column, row):
-        super().__init__("Linear")
-        self.col = column
-        self.row = row
-
-        # Xavier weight initialization
-        self.W = {'val': np.random.randn(self.row, self.col) * np.sqrt(1. / self.col), 'grad': 0}
-        self.b = {'val': np.random.randn(1, self.row) * np.sqrt(1. / self.row), 'grad': 0}
-
-    def forward(self, X):
-        self.cache = X
-        return np.dot(X, self.W['val'].T) + self.b['val']
-
-    def backward(self, deltaL):
-
-        X = self.cache
-        m = X.shape[0]
-
-        # Compute and store the gradient.
-        self.W['grad'] = (1 / m) * np.dot(deltaL.T, X)
-        self.b['grad'] = (1 / m) * np.sum(deltaL, axis=0)
-
-        # Compute error.
-        new_deltaL = np.dot(deltaL, self.W['val'])
-        return new_deltaL, self.W['grad'], self.b['grad']
-
-
-
-
-
-
