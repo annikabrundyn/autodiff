@@ -40,11 +40,12 @@ class Flatten(Layer):
 class Linear(Layer):
     """
     Fully connected layer - similar to PyTorch nn.Linear
+    Adapted from:
     """
-    def __init__(self, column, row):
+    def __init__(self, in_dim, out_dim):
         super().__init__("Linear")
-        self.col = column
-        self.row = row
+        self.col = in_dim
+        self.row = out_dim
 
         self._init_weights()
 

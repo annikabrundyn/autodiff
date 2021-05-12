@@ -3,7 +3,9 @@ from autodiff.layer import Layer
 
 
 class ReLU(Layer):
-
+    """
+    Rectified Linear Unit (ReLU) non-linearity
+    """
     def __init__(self):
         super().__init__('ReLU')
 
@@ -17,7 +19,9 @@ class ReLU(Layer):
 
 
 class TanH(Layer):
-
+    """
+    Hyperbolic Tangenet non-linearity
+    """
     def __init__(self):
         super().__init__('TanH')
 
@@ -31,7 +35,9 @@ class TanH(Layer):
 
 
 class Sigmoid(Layer):
-
+    """
+    Sigmoid layer
+    """
     def __init__(self):
         super().__init__('Sigmoid')
 
