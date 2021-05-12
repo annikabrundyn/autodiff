@@ -1,8 +1,8 @@
 import numpy as np
 from abc import ABC, abstractmethod
-from typing import Tuple
+
 from autodiff.utils import im2col, col2im
-import numpy as np
+
 
 
 class Layer(ABC):
