@@ -18,6 +18,6 @@ pip install -e .
 
 [Comparing with PyTorch](<https://colab.research.google.com/drive/11Jg-CGzNFLL2eEcszvF5STruS6Z6jDtT?usp=sharing>)
 
-[Training an MLP]()
+[Training an MLP](https://colab.research.google.com/drive/1sZNVy9g7VqygFMoS-rpJDMmXAu2UEoDk?usp=sharing)
 
 [Accelerating the convolution operator]()
