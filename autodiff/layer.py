@@ -108,6 +108,10 @@ class Conv2D(Layer):
         The Conv2D layer is inspired by the PyTorch API.
         The implementation is adapted from: https://github.com/3outeille/CNNumpy/blob/master/src/fast/layers.py
 
+        Note:
+            Applying the Im2Col Transformation trades memory for efficiency. We found the forward calculation of a
+            Conv layer with the transformation to be roughly 100 times faster than without.
+
         Args:
             in_channels: number of channels in the input image
             out_channels: number of channels produced by the convolution
