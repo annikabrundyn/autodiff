@@ -38,8 +38,8 @@ class Flatten(Layer):
         self.old_shape = X.shape
         return X.reshape(X.shape[0], -1)
 
-    def backward(self, deltaL):
-        return deltaL.reshape(*self.old_shape)
+    def backward(self, prev_grad):
+        return prev_grad.reshape(*self.old_shape)
 
 
 class Linear(Layer):
@@ -59,37 +59,36 @@ class Linear(Layer):
             out_features: size of each output sample
         """
         super().__init__("Linear")
-        self.col = in_features
-        self.row = out_features
+        self.in_feat = in_features
+        self.out_feat = out_features
 
         self._init_weights()
 
     def _init_weights(self, type="xavier"):
         if type == "xavier":
-            bound = np.sqrt(1. / self.col)
-            self.W = {'val': np.random.randn(self.row, self.col) * bound, 'grad': 0}
-            self.b = {'val': np.random.randn(1, self.row) * bound, 'grad': 0}
+            bound = np.sqrt(1. / self.in_feat)
+            self.W = {'val': np.random.randn(self.out_feat, self.in_feat) * bound, 'grad': 0}
+            self.b = {'val': np.random.randn(1, self.out_feat) * bound, 'grad': 0}
 
         elif type == "random":
-            self.W = {'val': np.random.randn(self.row, self.col), 'grad': 0}
-            self.b = {'val': np.random.randn(1, self.row), 'grad': 0}
+            self.W = {'val': np.random.randn(self.out_feat, self.in_feat), 'grad': 0}
+            self.b = {'val': np.random.randn(1, self.out_feat), 'grad': 0}
 
     def forward(self, X):
-        self.cache = X
+        self.cache = np.copy(X)
         return np.dot(X, self.W['val'].T) + self.b['val']
 
-    def backward(self, deltaL):
-
+    def backward(self, prev_grad):
         X = self.cache
-        m = X.shape[0]
 
         # Compute and store the gradient.
-        self.W['grad'] = (1 / m) * np.dot(deltaL.T, X)
-        self.b['grad'] = (1 / m) * np.sum(deltaL, axis=0)
+        batch_size = X.shape[0]
+        self.W['grad'] = (1 / batch_size) * np.dot(prev_grad.T, X)
+        self.b['grad'] = (1 / batch_size) * np.sum(prev_grad, axis=0)
 
         # Compute error.
-        new_deltaL = np.dot(deltaL, self.W['val'])
-        return new_deltaL, self.W['grad'], self.b['grad']
+        new_grad = np.dot(prev_grad, self.W['val'])
+        return new_grad, self.W['grad'], self.b['grad']
 
 
 class Conv2D(Layer):
