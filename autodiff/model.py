@@ -3,6 +3,9 @@ from autodiff.layer import Layer
 
 
 class Model:
+    """
+    Base model class
+    """
 
     def __init__(self):
         self.layers = []

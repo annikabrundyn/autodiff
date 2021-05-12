@@ -2,12 +2,10 @@ import numpy as np
 from autodiff.layer import Layer
 
 
-class BCE(Layer):
-    """Binary Cross-Entropy.
-    We assume the loss layer is the last of the network; hence, it does not need the
-    error of the following layer.
+class BinaryCrossEntropy(Layer):
     """
-
+    Binary Cross-Entropy.
+    """
     def __init__(self, ):
         super().__init__('BCE Loss')
 
@@ -30,12 +28,10 @@ class BCE(Layer):
         return (val/batch_size)
 
 
-class MSE(Layer):
-    """Mean square error.
-    We assume the loss layer is the last of the network; hence, it does not need the
-    error of the following layer.
+class MeanSquareError(Layer):
     """
-
+    Mean square error.
+    """
     def __init__(self):
         super().__init__('MSE Loss')
 
@@ -59,7 +55,8 @@ class MSE(Layer):
 
 
 class CategoricalCrossEntropy(Layer):
-    """WIP - similar to pytorch - applies softmax then ce
+    """
+    CategoricalCrossEntropy - Applies softmax then NLL loss (similar to PyTorch)
     """
     def __init__(self, ):
         super().__init__('CE Loss')
@@ -73,7 +70,6 @@ class CategoricalCrossEntropy(Layer):
         # apply stable softmax
         probs = np.exp(pred - np.max(pred))
         self.pred = probs / np.sum(probs, axis=1)[:, np.newaxis]
-        #self.pred = pred.clip(min=1e-8, max=None)
         self.target = target
 
         # since reduction is mean - should generalize this
