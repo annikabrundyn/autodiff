@@ -4,8 +4,9 @@ from autodiff.layer import Layer
 
 class BinaryCrossEntropy(Layer):
     """
-    Binary Cross-Entropy.
+    Binary Cross-Entropy loss layer.
     """
+
     def __init__(self, ):
         super().__init__('BCE Loss')
 
@@ -31,8 +32,9 @@ class BinaryCrossEntropy(Layer):
 
 class MeanSquareError(Layer):
     """
-    Mean square error.
+    Mean square error loss layer.
     """
+
     def __init__(self):
         super().__init__('MSE Loss')
 
@@ -57,8 +59,9 @@ class MeanSquareError(Layer):
 
 class CategoricalCrossEntropy(Layer):
     """
-    CategoricalCrossEntropy - Applies softmax then NLL loss (similar to PyTorch)
+    Categorical Cross Entropy loss layer - Applies softmax then NLL loss (similar to PyTorch)
     """
+
     def __init__(self, ):
         super().__init__('CE Loss')
 
