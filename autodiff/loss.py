@@ -9,7 +9,7 @@ class BCE(Layer):
     """
 
     def __init__(self, ):
-        super().__init__('BCE Loss', 1)
+        super().__init__('BCE Loss')
 
     def __call__(self, pred: np.ndarray, target: np.ndarray) -> np.ndarray:
         return self.forward(pred, target)
@@ -37,7 +37,7 @@ class MSE(Layer):
     """
 
     def __init__(self):
-        super().__init__('MSE Loss', 1)
+        super().__init__('MSE Loss')
 
     def __call__(self,  pred: np.ndarray, target: np.ndarray) -> np.ndarray:
         return self.forward(pred, target)
@@ -62,7 +62,7 @@ class CategoricalCrossEntropy(Layer):
     """WIP - similar to pytorch - applies softmax then ce
     """
     def __init__(self, ):
-        super().__init__('CE Loss', 1)
+        super().__init__('CE Loss')
 
     def __call__(self, pred: np.ndarray, target: np.ndarray) -> np.ndarray:
         return self.forward(pred, target)

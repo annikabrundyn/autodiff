@@ -5,16 +5,13 @@ import math
 from autodiff.utils import get_indices, im2col, col2im
 import numpy as np
 
+
 class Layer(ABC):
     """abstract layer class"""
 
-    def __init__(self, layer_type: str, output_dim: int):
+    def __init__(self, layer_type: str):
         self.type = layer_type
-        self.units = output_dim
-        self._prev_val = None
-
-    def __len__(self) -> int:
-        return self.units
+        self.cache = None
 
     def __str__(self):
         return f"{self.type} Layer"
@@ -28,7 +25,7 @@ class Layer(ABC):
 class Conv2D(Layer):
 
     def __init__(self, in_channels, out_channels, filter_size, stride=1, padding=0):
-        super().__init__('Conv', out_channels)
+        super().__init__('Conv')
         self.n_C = in_channels
         self.n_F = out_channels
         self.f = filter_size
@@ -43,14 +40,6 @@ class Conv2D(Layer):
         self.cache = None
 
     def forward(self, X):
-        """
-            Performs a forward convolution.
-
-            Parameters:
-            - X : Last conv layer of shape (m, n_C_prev, n_H_prev, n_W_prev).
-            Returns:
-            - out: previous layer convolved.
-        """
         m, n_C_prev, n_H_prev, n_W_prev = X.shape
 
         n_C = self.n_F
@@ -68,17 +57,6 @@ class Conv2D(Layer):
         return out
 
     def backward(self, dout):
-        """
-            Distributes error from previous layer to convolutional layer and
-            compute error for the current convolutional layer.
-            Parameters:
-            - dout: error from previous layer.
-
-            Returns:
-            - dX: error of the current convolutional layer.
-            - self.W['grad']: weights gradient.
-            - self.b['grad']: bias gradient.
-        """
         X, X_col, w_col = self.cache
         m, _, _, _ = X.shape
         # Compute bias gradient.
@@ -188,11 +166,11 @@ class Conv2D(Layer):
 class Linear(Layer):
 
     def __init__(self, column, row):
-        super().__init__("Linear", 1)
-        self.row = row
+        super().__init__("Linear")
         self.col = column
+        self.row = row
 
-        # Xavier-Glorot weight initialization
+        # Xavier weight initialization
         self.W = {'val': np.random.randn(self.row, self.col) * np.sqrt(1. / self.col), 'grad': 0}
         self.b = {'val': np.random.randn(1, self.row) * np.sqrt(1. / self.row), 'grad': 0}
 
@@ -221,7 +199,7 @@ class Flatten(Layer):
     Flattens a contiguous range of dimensions. Used when going from Conv2D --> Linear Layer
     """
     def __init__(self, start_dim=1, end_dim=-1):
-        super().__init__('Flatten', 1)
+        super().__init__('Flatten')
         self.start_dim = start_dim
         self.end_dim = end_dim
 
