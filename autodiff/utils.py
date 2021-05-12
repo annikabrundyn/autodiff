@@ -1,5 +1,7 @@
 import numpy as np
-
+"""
+Got these utils from: <CITE>
+"""
 
 def get_indices(X_shape, HF, WF, stride, pad):
     """
