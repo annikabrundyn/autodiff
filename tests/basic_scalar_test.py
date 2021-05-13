@@ -1,2 +1,0 @@
-import autodiff as ad
-
