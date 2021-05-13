@@ -18,4 +18,4 @@ pip install -e .
 
 [Comparing with PyTorch](<https://colab.research.google.com/drive/11Jg-CGzNFLL2eEcszvF5STruS6Z6jDtT?usp=sharing>)
 
-[Accelerating the convolution operator](https://colab.research.google.com/drive/1yeK0S9ujfTOdu_21wFh959oMlDSJqjGf?usp=sharing)
+[Accelerating the convolution operator](https://colab.research.google.com/drive/107xSpUrYzhsrfFXmQVm0l_83OgAW6Smi?usp=sharing)
